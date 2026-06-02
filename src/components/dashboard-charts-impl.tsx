@@ -69,7 +69,7 @@ export function EquityCurveChart({ benchmark }: { benchmark: Benchmark }) {
               tickLine={false}
               axisLine={false}
               fontSize={12}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value: number) => `$${value}`}
             />
             <Tooltip contentStyle={tooltipStyle} cursor={{ stroke: chartColors.grid }} />
             <Area
@@ -123,7 +123,7 @@ export function DrawdownChart({ benchmark }: { benchmark: Benchmark }) {
               tickLine={false}
               axisLine={false}
               fontSize={12}
-              tickFormatter={(value) => `${value}%`}
+              tickFormatter={(value: number) => `${value}%`}
             />
             <Tooltip contentStyle={tooltipStyle} cursor={{ stroke: chartColors.grid }} />
             <Line
@@ -176,7 +176,7 @@ export function MonthlyReturnsChart({ benchmark }: { benchmark: Benchmark }) {
               tickLine={false}
               axisLine={false}
               fontSize={12}
-              tickFormatter={(value) => `${value}%`}
+              tickFormatter={(value: number) => `${value}%`}
             />
             <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--panel-muted))" }} />
             <Bar dataKey="strategy" name="Strategy" fill={chartColors.strategy} radius={[4, 4, 0, 0]} />
