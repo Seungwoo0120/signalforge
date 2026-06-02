@@ -1,10 +1,10 @@
 import { GitCompareArrows } from "lucide-react";
 
 import { getBenchmarkStats } from "@/data/mock-data";
-import type { Benchmark } from "@/types/strategy";
+import type { Benchmark, BenchmarkStat } from "@/types/strategy";
 
-export function BenchmarkComparison({ benchmark }: { benchmark: Benchmark }) {
-  const benchmarkStats = getBenchmarkStats(benchmark);
+export function BenchmarkComparison({ benchmark, stats }: { benchmark: Benchmark; stats?: BenchmarkStat[] }) {
+  const benchmarkStats = stats ?? getBenchmarkStats(benchmark);
 
   return (
     <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">

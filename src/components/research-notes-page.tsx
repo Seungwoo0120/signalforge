@@ -5,33 +5,26 @@ import { AlertTriangle, BookOpenText, CheckCircle2, Lightbulb, ShieldAlert } fro
 import { PageHeader } from "@/components/page-header";
 import { getStrategyRules } from "@/data/mock-data";
 import { useStrategy } from "@/providers/strategy-provider";
+import { runMockBacktest } from "@/services/mock-backtest-service";
+import { generateMockResearchNotes } from "@/services/mock-research-service";
+import { runMockScreener } from "@/services/mock-screener-service";
+import type { ResearchSectionId } from "@/types/research";
 
-const sections = [
-  {
-    title: "What worked",
-    icon: CheckCircle2,
-    body: "The mock results favor a disciplined trend and momentum stack. Stocks must pass the long-term trend filter before the strategy considers short-term strength, which helps avoid buying weak rebound candidates in this sample."
-  },
-  {
-    title: "Key risks",
-    icon: ShieldAlert,
-    body: "The approach can lag sharp reversals and may become concentrated in high-momentum technology names. Drawdowns can still be meaningful when the benchmark sells off or when leadership rotates quickly."
-  },
-  {
-    title: "Overfitting warning",
-    icon: AlertTriangle,
-    body: "The thresholds shown here are educational mock settings. A real implementation would need out-of-sample testing, transaction cost modeling, survivorship-bias controls, and sensitivity analysis before drawing conclusions."
-  },
-  {
-    title: "Possible improvements",
-    icon: Lightbulb,
-    body: "Next iterations could add regime filters, sector caps, turnover constraints, and clearer trade logs. The most useful near-term improvement is making every rule explainable before adding more parameters."
-  }
-];
+const sectionIcons: Record<ResearchSectionId, typeof CheckCircle2> = {
+  worked: CheckCircle2,
+  risks: ShieldAlert,
+  overfitting: AlertTriangle,
+  costs: AlertTriangle,
+  benchmark: ShieldAlert,
+  improvements: Lightbulb
+};
 
 export function ResearchNotesPage() {
   const { strategy } = useStrategy();
   const enabledRules = getStrategyRules(strategy).filter((rule) => rule.enabled);
+  const backtest = runMockBacktest(strategy);
+  const screener = runMockScreener(strategy);
+  const notes = generateMockResearchNotes(strategy, backtest, screener);
 
   return (
     <>
@@ -49,10 +42,7 @@ export function ResearchNotesPage() {
             </div>
             <div>
               <h2 className="text-base font-semibold tracking-tight">Strategy summary</h2>
-              <p className="mt-1 text-sm leading-6 text-textMuted">
-                {strategy.name} screens {strategy.universe} stocks against {strategy.benchmark} and
-                selects {strategy.portfolioSize.toLowerCase()} using {strategy.weighting.toLowerCase()}.
-              </p>
+              <p className="mt-1 text-sm leading-6 text-textMuted">{notes.strategySummary}</p>
             </div>
           </div>
 
@@ -67,8 +57,8 @@ export function ResearchNotesPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          {sections.map((section) => {
-            const Icon = section.icon;
+          {notes.sections.map((section) => {
+            const Icon = sectionIcons[section.id];
             return (
               <article key={section.title} className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
                 <div className="flex items-start gap-3">
@@ -88,10 +78,7 @@ export function ResearchNotesPage() {
 
       <section className="mt-6 rounded-md border border-dashed border-borderSoft bg-panel p-5 shadow-panel">
         <div className="text-sm font-semibold">Placeholder scope</div>
-        <p className="mt-2 text-sm leading-6 text-textMuted">
-          Future AI explanations should cite the selected rules, show assumptions, and flag uncertainty.
-          This prototype only demonstrates where that interpretation could appear.
-        </p>
+        <p className="mt-2 text-sm leading-6 text-textMuted">{notes.disclaimer}</p>
       </section>
     </>
   );

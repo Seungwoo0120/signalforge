@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 import { ChartContainer } from "@/components/chart-container";
-import type { Benchmark } from "@/types/strategy";
+import type { Benchmark, ChartPoint } from "@/types/strategy";
 
 const EquityCurveChartClient = dynamic(
   () => import("@/components/dashboard-charts-impl").then((mod) => mod.EquityCurveChart),
@@ -29,16 +29,16 @@ const MonthlyReturnsChartClient = dynamic(
   }
 );
 
-export function EquityCurveChart({ benchmark }: { benchmark: Benchmark }) {
-  return <EquityCurveChartClient benchmark={benchmark} />;
+export function EquityCurveChart({ benchmark, data }: { benchmark: Benchmark; data?: ChartPoint[] }) {
+  return <EquityCurveChartClient benchmark={benchmark} data={data} />;
 }
 
-export function DrawdownChart({ benchmark }: { benchmark: Benchmark }) {
-  return <DrawdownChartClient benchmark={benchmark} />;
+export function DrawdownChart({ benchmark, data }: { benchmark: Benchmark; data?: ChartPoint[] }) {
+  return <DrawdownChartClient benchmark={benchmark} data={data} />;
 }
 
-export function MonthlyReturnsChart({ benchmark }: { benchmark: Benchmark }) {
-  return <MonthlyReturnsChartClient benchmark={benchmark} />;
+export function MonthlyReturnsChart({ benchmark, data }: { benchmark: Benchmark; data?: ChartPoint[] }) {
+  return <MonthlyReturnsChartClient benchmark={benchmark} data={data} />;
 }
 
 function ChartFallback({ title, height }: { title: string; height: string }) {

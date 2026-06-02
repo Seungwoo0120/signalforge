@@ -10,13 +10,18 @@ import { MetricCard } from "@/components/metric-card";
 import { PageHeader } from "@/components/page-header";
 import { ResultsTable } from "@/components/results-table";
 import { StrategyConfigCard } from "@/components/strategy-config-card";
-import { getRiskMetrics, screenerRows } from "@/data/mock-data";
 import { useStrategy } from "@/providers/strategy-provider";
+import { runMockBacktest as calculateMockBacktest } from "@/services/mock-backtest-service";
+import { generateMockResearchNotes } from "@/services/mock-research-service";
+import { runMockScreener } from "@/services/mock-screener-service";
 
 export function DashboardPage() {
   const router = useRouter();
   const { strategy, runMockBacktest } = useStrategy();
-  const metrics = getRiskMetrics(strategy.benchmark);
+  const backtest = calculateMockBacktest(strategy);
+  const screener = runMockScreener(strategy);
+  const notes = generateMockResearchNotes(strategy, backtest, screener);
+  const metrics = backtest.metrics.slice(0, 6);
 
   function handleRunBacktest() {
     runMockBacktest();
@@ -76,20 +81,20 @@ export function DashboardPage() {
       </section>
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <EquityCurveChart benchmark={strategy.benchmark} />
+        <EquityCurveChart benchmark={strategy.benchmark} data={backtest.equityCurve} />
         <StrategyConfigCard strategy={strategy} />
       </section>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-2">
-        <DrawdownChart benchmark={strategy.benchmark} />
-        <MonthlyReturnsChart benchmark={strategy.benchmark} />
+        <DrawdownChart benchmark={strategy.benchmark} data={backtest.drawdown} />
+        <MonthlyReturnsChart benchmark={strategy.benchmark} data={backtest.monthlyReturns} />
       </section>
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_420px]">
-        <ResultsTable rows={screenerRows.slice(0, 5)} rebalance={strategy.rebalance} />
+        <ResultsTable rows={screener.rows.slice(0, 5)} rebalance={strategy.rebalance} />
         <div className="grid gap-6">
-          <BenchmarkComparison benchmark={strategy.benchmark} />
-          <AiExplanationPanel />
+          <BenchmarkComparison benchmark={strategy.benchmark} stats={backtest.benchmarkStats} />
+          <AiExplanationPanel notes={notes} />
         </div>
       </section>
     </>

@@ -35,9 +35,9 @@ const tooltipStyle = {
   color: "hsl(var(--text-primary))"
 };
 
-export function EquityCurveChart({ benchmark }: { benchmark: Benchmark }) {
+export function EquityCurveChart({ benchmark, data }: { benchmark: Benchmark; data?: ChartPoint[] }) {
   const mounted = useMounted();
-  const data = getChartData(benchmark).equity;
+  const chartData = data ?? getChartData(benchmark).equity;
 
   return (
     <ChartContainer
@@ -48,7 +48,7 @@ export function EquityCurveChart({ benchmark }: { benchmark: Benchmark }) {
       <div className="h-[320px]">
         {mounted ? (
           <ResponsiveContainer height="100%" width="100%">
-          <AreaChart data={data} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
             <defs>
               <linearGradient id="strategyFill" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="5%" stopColor={chartColors.strategy} stopOpacity={0.22} />
@@ -99,16 +99,16 @@ export function EquityCurveChart({ benchmark }: { benchmark: Benchmark }) {
   );
 }
 
-export function DrawdownChart({ benchmark }: { benchmark: Benchmark }) {
+export function DrawdownChart({ benchmark, data }: { benchmark: Benchmark; data?: ChartPoint[] }) {
   const mounted = useMounted();
-  const data = getChartData(benchmark).drawdown;
+  const chartData = data ?? getChartData(benchmark).drawdown;
 
   return (
     <ChartContainer title="Drawdown Preview" subtitle="Peak-to-trough declines over the mock test">
       <div className="h-[265px]">
         {mounted ? (
           <ResponsiveContainer height="100%" width="100%">
-          <LineChart data={data} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+          <LineChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
             <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="month"
@@ -153,16 +153,16 @@ export function DrawdownChart({ benchmark }: { benchmark: Benchmark }) {
   );
 }
 
-export function MonthlyReturnsChart({ benchmark }: { benchmark: Benchmark }) {
+export function MonthlyReturnsChart({ benchmark, data }: { benchmark: Benchmark; data?: ChartPoint[] }) {
   const mounted = useMounted();
-  const data = getChartData(benchmark).monthly;
+  const chartData = data ?? getChartData(benchmark).monthly;
 
   return (
     <ChartContainer title="Recent Monthly Returns" subtitle="Mock return distribution by month">
       <div className="h-[265px]">
         {mounted ? (
           <ResponsiveContainer height="100%" width="100%">
-          <BarChart data={data} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+          <BarChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
             <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="month"

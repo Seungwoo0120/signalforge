@@ -5,9 +5,9 @@ import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { PageHeader } from "@/components/page-header";
-import { screenerRows } from "@/data/mock-data";
 import { cn } from "@/lib/utils";
 import { useStrategy } from "@/providers/strategy-provider";
+import { runMockScreener } from "@/services/mock-screener-service";
 
 type SortKey = "score" | "momentum" | "rsi";
 type StatusFilter = "All" | "Included" | "Filtered" | "Watchlist" | "RSI limit";
@@ -17,9 +17,10 @@ export function ScreenerPage() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<StatusFilter>("All");
   const [sortKey, setSortKey] = useState<SortKey>("score");
+  const screener = useMemo(() => runMockScreener(strategy), [strategy]);
 
   const rows = useMemo(() => {
-    return screenerRows
+    return screener.rows
       .filter((row) => {
         const searchable = `${row.ticker} ${row.company} ${row.sector}`.toLowerCase();
         const matchesQuery = searchable.includes(query.toLowerCase());
@@ -27,14 +28,14 @@ export function ScreenerPage() {
         return matchesQuery && matchesStatus;
       })
       .sort((a, b) => b[sortKey] - a[sortKey]);
-  }, [query, sortKey, status]);
+  }, [query, screener.rows, sortKey, status]);
 
   return (
     <>
       <PageHeader
         eyebrow="Screener"
         title="Review stocks passing the current mock rule stack."
-        description={`The table is filtered by the current ${strategy.universe} strategy configuration. Results are sample data for UI prototyping only.`}
+        description={`${screener.ruleSummary} Results are hypothetical sample data for UI prototyping only.`}
       />
 
       <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
@@ -70,6 +71,12 @@ export function ScreenerPage() {
               <option value="rsi">Sort by RSI</option>
             </select>
           </div>
+        </div>
+
+        <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
+          <Summary label="Included" value={String(screener.summary.included)} />
+          <Summary label="Watchlist" value={String(screener.summary.watchlist)} />
+          <Summary label="Filtered" value={String(screener.summary.filtered)} />
         </div>
 
         <div className="mt-5 overflow-x-auto">
@@ -142,5 +149,14 @@ function SignalPill({ children, pass }: { children: ReactNode; pass: boolean }) 
     >
       {children}
     </span>
+  );
+}
+
+function Summary({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md bg-panelMuted p-3">
+      <div className="text-textMuted">{label}</div>
+      <div className="mt-1 font-semibold">{value}</div>
+    </div>
   );
 }

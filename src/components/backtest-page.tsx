@@ -7,12 +7,13 @@ import { DrawdownChart, EquityCurveChart, MonthlyReturnsChart } from "@/componen
 import { MetricCard } from "@/components/metric-card";
 import { PageHeader } from "@/components/page-header";
 import { StrategyConfigCard } from "@/components/strategy-config-card";
-import { getBacktestMetrics } from "@/data/mock-data";
 import { useStrategy } from "@/providers/strategy-provider";
+import { runMockBacktest as calculateMockBacktest } from "@/services/mock-backtest-service";
 
 export function BacktestPage() {
   const { strategy, lastRunAt, runMockBacktest } = useStrategy();
-  const metrics = getBacktestMetrics(strategy.benchmark);
+  const backtest = calculateMockBacktest(strategy);
+  const metrics = backtest.metrics;
   const runLabel = lastRunAt
     ? new Intl.DateTimeFormat("en", {
         month: "short",
@@ -68,17 +69,31 @@ export function BacktestPage() {
       </section>
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <EquityCurveChart benchmark={strategy.benchmark} />
+        <EquityCurveChart benchmark={strategy.benchmark} data={backtest.equityCurve} />
         <StrategyConfigCard strategy={strategy} />
       </section>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-2">
-        <DrawdownChart benchmark={strategy.benchmark} />
-        <MonthlyReturnsChart benchmark={strategy.benchmark} />
+        <DrawdownChart benchmark={strategy.benchmark} data={backtest.drawdown} />
+        <MonthlyReturnsChart benchmark={strategy.benchmark} data={backtest.monthlyReturns} />
       </section>
 
       <section className="mt-6">
-        <BenchmarkComparison benchmark={strategy.benchmark} />
+        <BenchmarkComparison benchmark={strategy.benchmark} stats={backtest.benchmarkStats} />
+      </section>
+
+      <section className="mt-6 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+        <h2 className="text-base font-semibold tracking-tight">Mock assumptions</h2>
+        <p className="mt-1 text-sm leading-6 text-textMuted">
+          Results are deterministic simulations for product design. Higher return does not guarantee future performance.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {Object.entries(backtest.assumptions).map(([key, value]) => (
+            <div key={key} className="rounded-md bg-panelMuted p-3 text-sm leading-6 text-textMuted">
+              {value}
+            </div>
+          ))}
+        </div>
       </section>
     </>
   );
