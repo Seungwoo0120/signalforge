@@ -1,7 +1,7 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
-import { MetricTone } from "@/data/mock-data";
 import { cn } from "@/lib/utils";
+import type { MetricTone } from "@/types/strategy";
 
 const toneStyles: Record<MetricTone, string> = {
   positive: "text-success",

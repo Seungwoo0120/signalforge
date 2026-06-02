@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { ReactNode } from "react";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { StrategyProvider } from "@/providers/strategy-provider";
 import "./globals.css";
+
 
 export const metadata: Metadata = {
   title: "SignalForge",
@@ -26,7 +28,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             `
           }}
         />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <StrategyProvider>{children}</StrategyProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
