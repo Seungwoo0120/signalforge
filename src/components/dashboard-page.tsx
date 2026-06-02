@@ -10,6 +10,7 @@ import { MetricCard } from "@/components/metric-card";
 import { PageHeader } from "@/components/page-header";
 import { ResultsTable } from "@/components/results-table";
 import { StrategyConfigCard } from "@/components/strategy-config-card";
+import { useBacktestRuns } from "@/hooks/use-backtest-runs";
 import { useStrategy } from "@/providers/strategy-provider";
 import { runMockBacktest as calculateMockBacktest } from "@/services/mock-backtest-service";
 import { generateMockResearchNotes } from "@/services/mock-research-service";
@@ -18,12 +19,14 @@ import { runMockScreener } from "@/services/mock-screener-service";
 export function DashboardPage() {
   const router = useRouter();
   const { strategy, runMockBacktest } = useStrategy();
+  const { latestRun, saveRun } = useBacktestRuns();
   const backtest = calculateMockBacktest(strategy);
   const screener = runMockScreener(strategy);
   const notes = generateMockResearchNotes(strategy, backtest, screener);
   const metrics = backtest.metrics.slice(0, 6);
 
   function handleRunBacktest() {
+    saveRun({ strategy, backtest, screener });
     runMockBacktest();
     router.push("/backtest?run=latest");
   }
@@ -57,20 +60,25 @@ export function DashboardPage() {
       />
 
       <section className="mb-6 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accentSoft text-accent">
-            <Activity size={20} />
-          </div>
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
-            <div className="text-sm font-medium text-textMuted">Current strategy</div>
-            <div className="font-semibold">{strategy.name}</div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accentSoft text-accent">
+                <Activity size={20} />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-textMuted">Current strategy</div>
+                <div className="font-semibold">{strategy.name}</div>
+              </div>
+            </div>
+            <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+              <Summary label="Universe" value={strategy.universe} />
+              <Summary label="Benchmark" value={strategy.benchmark} />
+              <Summary label="Portfolio" value={strategy.portfolioSize} />
+              <Summary label="Cost" value={strategy.transactionCost} />
+            </div>
           </div>
-        </div>
-        <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
-          <Summary label="Universe" value={strategy.universe} />
-          <Summary label="Benchmark" value={strategy.benchmark} />
-          <Summary label="Portfolio" value={strategy.portfolioSize} />
-          <Summary label="Cost" value={strategy.transactionCost} />
+          <LatestRunSummary latestRun={latestRun} onOpen={() => router.push("/backtest?run=latest")} />
         </div>
       </section>
 
@@ -99,6 +107,58 @@ export function DashboardPage() {
       </section>
     </>
   );
+}
+
+function LatestRunSummary({
+  latestRun,
+  onOpen
+}: {
+  latestRun: ReturnType<typeof useBacktestRuns>["latestRun"];
+  onOpen: () => void;
+}) {
+  if (!latestRun) {
+    return (
+      <div className="min-w-[280px] rounded-md border border-dashed border-borderSoft bg-panelMuted p-4">
+        <div className="text-sm font-semibold">Latest Backtest Run</div>
+        <p className="mt-2 text-sm leading-6 text-textMuted">
+          No saved run yet. Run a mock backtest to store a snapshot of the current strategy.
+        </p>
+      </div>
+    );
+  }
+
+  const metrics = latestRun.backtestResultSnapshot.metrics;
+  const createdAt = new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(latestRun.createdAt));
+
+  return (
+    <div className="min-w-[300px] rounded-md border border-borderSoft bg-panelMuted p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-sm font-semibold">Latest Backtest Run</div>
+          <p className="mt-1 text-sm text-textMuted">{createdAt}</p>
+        </div>
+        <button className="text-sm font-semibold text-accent" type="button" onClick={onOpen}>
+          Open
+        </button>
+      </div>
+      <div className="mt-3 text-sm font-semibold">{latestRun.strategyName}</div>
+      <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+        <Summary label="Return" value={metricValue(metrics, "Total Return")} />
+        <Summary label="Sharpe" value={metricValue(metrics, "Sharpe Ratio")} />
+        <Summary label="Drawdown" value={metricValue(metrics, "Max Drawdown")} />
+        <Summary label="Benchmark" value={latestRun.benchmark} />
+      </div>
+    </div>
+  );
+}
+
+function metricValue(metrics: { label: string; value: string }[], label: string) {
+  return metrics.find((metric) => metric.label === label)?.value ?? "n/a";
 }
 
 function Summary({ label, value }: { label: string; value: string }) {

@@ -16,7 +16,8 @@ import {
   round,
   toChartPoints
 } from "@/lib/quant-metrics";
-import type { BacktestResult } from "@/types/backtest";
+import { runMockScreener } from "@/services/mock-screener-service";
+import type { BacktestResult, RebalanceLogRow } from "@/types/backtest";
 import type { Benchmark, ChartPoint, StrategyConfig, StrategyMetric } from "@/types/strategy";
 
 const months = [
@@ -96,6 +97,7 @@ const qqqReturns = [
 
 export function runMockBacktest(strategy: StrategyConfig): BacktestResult {
   const benchmarkReturns = getBenchmarkReturns(strategy.benchmark);
+  const screener = runMockScreener(strategy);
   const portfolioCount = getPortfolioCount(strategy.portfolioSize);
   const turnover = getRebalanceTurnover(strategy.rebalance);
   const costRate = parseTransactionCost(strategy.transactionCost);
@@ -145,6 +147,15 @@ export function runMockBacktest(strategy: StrategyConfig): BacktestResult {
   const winRate = calculateWinRate(strategyReturns);
   const beta = calculateBeta(strategyReturns, benchmarkReturns);
   const alpha = cagr - benchmarkCagr * beta;
+  const rebalanceLog = buildRebalanceLog({
+    strategy,
+    rankedTickers: screener.rows.map((row) => row.ticker),
+    strategyReturns,
+    benchmarkReturns,
+    turnover,
+    costRate,
+    portfolioCount
+  });
 
   return {
     summary: {
@@ -209,7 +220,8 @@ export function runMockBacktest(strategy: StrategyConfig): BacktestResult {
       rebalanceTurnover: `${strategy.rebalance} rebalance assumes ${turnover.toFixed(2)}x annual turnover.`,
       transactionCost: `${strategy.transactionCost} cost reduces returns by about ${annualCostImpact.toFixed(2)}% annualized in this mock model.`,
       ruleImpact: "Trend, momentum, RSI, and volume rules alter downside guardrails and candidate quality."
-    }
+    },
+    rebalanceLog
   };
 }
 
@@ -318,4 +330,67 @@ function buildMetrics({
       tone: transactionCostImpact > 0.2 ? "negative" : "neutral"
     }
   ];
+}
+
+function buildRebalanceLog({
+  strategy,
+  rankedTickers,
+  strategyReturns,
+  benchmarkReturns,
+  turnover,
+  costRate,
+  portfolioCount
+}: {
+  strategy: StrategyConfig;
+  rankedTickers: string[];
+  strategyReturns: number[];
+  benchmarkReturns: number[];
+  turnover: number;
+  costRate: number;
+  portfolioCount: number;
+}): RebalanceLogRow[] {
+  const logDates = getRebalanceDates(strategy.rebalance);
+  const weights = `${round(100 / portfolioCount, 1)}% each`;
+
+  return logDates.map((date, index) => {
+    const start = index % Math.max(1, rankedTickers.length - portfolioCount + 1);
+    const selectedTickers = rotateTickers(rankedTickers, start).slice(0, portfolioCount);
+    const previousTickers =
+      index === 0 ? [] : rotateTickers(rankedTickers, (index - 1) % Math.max(1, rankedTickers.length - portfolioCount + 1)).slice(0, portfolioCount);
+    const addedTickers = selectedTickers.filter((ticker) => !previousTickers.includes(ticker));
+    const removedTickers = previousTickers.filter((ticker) => !selectedTickers.includes(ticker));
+    const rowTurnover = index === 0 ? 1 : round(Math.max(addedTickers.length, removedTickers.length) / portfolioCount, 2);
+    const returnIndex = Math.min(strategyReturns.length - 1, strategyReturns.length - logDates.length + index);
+    const estimatedTransactionCost = round(rowTurnover * costRate * 10000, 2);
+
+    return {
+      date,
+      action: "Rebalance",
+      selectedTickers,
+      addedTickers,
+      removedTickers,
+      portfolioWeights: weights,
+      turnover: round(rowTurnover * turnover, 2),
+      estimatedTransactionCost,
+      periodReturn: strategyReturns[returnIndex],
+      benchmarkReturn: benchmarkReturns[returnIndex]
+    };
+  });
+}
+
+function getRebalanceDates(rebalance: StrategyConfig["rebalance"]) {
+  if (rebalance === "Weekly") {
+    return ["Feb 7 2026", "Feb 14 2026", "Feb 21 2026", "Feb 28 2026", "Mar 7 2026", "Mar 14 2026"];
+  }
+
+  if (rebalance === "Quarterly") {
+    return ["Jan 2025", "Apr 2025", "Jul 2025", "Oct 2025", "Jan 2026", "Apr 2026"];
+  }
+
+  return ["Nov 2025", "Dec 2025", "Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026"];
+}
+
+function rotateTickers(tickers: string[], offset: number) {
+  if (tickers.length === 0) return [];
+  return tickers.map((_, index) => tickers[(index + offset) % tickers.length]);
 }

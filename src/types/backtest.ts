@@ -1,4 +1,5 @@
 import type { BenchmarkStat, ChartPoint, StrategyConfig, StrategyMetric } from "@/types/strategy";
+import type { ScreenerResult } from "@/types/screener";
 
 export type BacktestAssumptions = {
   universeBias: string;
@@ -32,6 +33,19 @@ export type BacktestRawMetrics = {
   transactionCostImpact: number;
 };
 
+export type RebalanceLogRow = {
+  date: string;
+  action: "Rebalance";
+  selectedTickers: string[];
+  addedTickers: string[];
+  removedTickers: string[];
+  portfolioWeights: string;
+  turnover: number;
+  estimatedTransactionCost: number;
+  periodReturn: number;
+  benchmarkReturn: number;
+};
+
 export type BacktestResult = {
   summary: BacktestSummary;
   equityCurve: ChartPoint[];
@@ -41,4 +55,16 @@ export type BacktestResult = {
   benchmarkStats: BenchmarkStat[];
   rawMetrics: BacktestRawMetrics;
   assumptions: BacktestAssumptions;
+  rebalanceLog: RebalanceLogRow[];
+};
+
+export type BacktestRun = {
+  id: string;
+  createdAt: string;
+  runLabel: string;
+  strategyName: string;
+  benchmark: StrategyConfig["benchmark"];
+  strategySnapshot: StrategyConfig;
+  backtestResultSnapshot: BacktestResult;
+  screenerResultSnapshot: ScreenerResult;
 };
