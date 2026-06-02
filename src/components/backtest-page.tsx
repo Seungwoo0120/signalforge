@@ -1,6 +1,7 @@
 "use client";
 
 import { BarChart3, Clock, GitCompareArrows, History, Play, RotateCcw, ShieldCheck, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { BenchmarkComparison } from "@/components/benchmark-comparison";
@@ -11,6 +12,7 @@ import { StrategyConfigCard } from "@/components/strategy-config-card";
 import { useBacktestRuns } from "@/hooks/use-backtest-runs";
 import { useStrategy } from "@/providers/strategy-provider";
 import { runMockBacktest as calculateMockBacktest } from "@/services/mock-backtest-service";
+import { generateMockResearchNotes } from "@/services/mock-research-service";
 import { compareBacktestRuns } from "@/services/mock-run-comparison-service";
 import { runMockScreener } from "@/services/mock-screener-service";
 import { runMockSensitivityAnalysis } from "@/services/mock-sensitivity-service";
@@ -19,7 +21,8 @@ import type { RunComparisonResult, SensitivityAnalysis, SensitivityResult } from
 import type { StrategyConfig } from "@/types/strategy";
 
 export function BacktestPage() {
-  const { strategy, lastRunAt, runMockBacktest } = useStrategy();
+  const router = useRouter();
+  const { replaceStrategy, strategy, lastRunAt, runMockBacktest } = useStrategy();
   const { runs, latestRun, saveRun, clearRuns } = useBacktestRuns();
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
   const [comparisonRunIds, setComparisonRunIds] = useState<string[]>([]);
@@ -31,6 +34,14 @@ export function BacktestPage() {
   const viewLabel = selectedRun ? "Saved Run Snapshot" : "Current Strategy Preview";
   const metrics = backtest.metrics;
   const sensitivity = runMockSensitivityAnalysis(displayedStrategy);
+  const runNotes = selectedRun
+    ? generateMockResearchNotes(
+        selectedRun.strategySnapshot,
+        selectedRun.backtestResultSnapshot,
+        selectedRun.screenerResultSnapshot,
+        sensitivity
+      )
+    : null;
   const comparison = useMemo(() => compareBacktestRuns(runs, comparisonRunIds), [comparisonRunIds, runs]);
   const runLabel = lastRunAt
     ? new Intl.DateTimeFormat("en", {
@@ -140,6 +151,19 @@ export function BacktestPage() {
         ))}
       </section>
 
+      {selectedRun ? (
+        <section className="mt-6">
+          <RunDetailPanel
+            notes={runNotes?.strategySummary ?? "Saved run snapshot from local browser storage."}
+            run={selectedRun}
+            onLoadStrategy={() => {
+              replaceStrategy(selectedRun.strategySnapshot);
+              router.push("/strategy-builder");
+            }}
+          />
+        </section>
+      ) : null}
+
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
         <EquityCurveChart benchmark={displayedStrategy.benchmark} data={backtest.equityCurve} />
         <StrategyConfigCard strategy={displayedStrategy} />
@@ -229,9 +253,65 @@ function RecentRuns({
               <div className="mt-1 text-xs text-textMuted">
                 {formatRunDate(run.createdAt)} / {run.benchmark}
               </div>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                <span>Return {metricValue(run, "Total Return")}</span>
+                <span>Sharpe {metricValue(run, "Sharpe Ratio")}</span>
+              </div>
             </button>
           ))
         )}
+      </div>
+    </section>
+  );
+}
+
+function RunDetailPanel({
+  notes,
+  onLoadStrategy,
+  run
+}: {
+  notes: string;
+  onLoadStrategy: () => void;
+  run: BacktestRun;
+}) {
+  return (
+    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <div className="inline-flex rounded-md border border-borderSoft bg-panelMuted px-2.5 py-1 text-xs font-semibold text-textMuted">
+            Saved Run Snapshot
+          </div>
+          <h2 className="mt-3 text-lg font-semibold tracking-tight">{run.strategyName}</h2>
+          <p className="mt-1 text-sm leading-6 text-textMuted">
+            Created {formatRunDate(run.createdAt)}. This view uses the strategy and result snapshot saved at run time.
+          </p>
+        </div>
+        <button
+          className="inline-flex rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+          type="button"
+          onClick={onLoadStrategy}
+        >
+          Load Strategy from Run
+        </button>
+      </div>
+
+      <div className="mt-5 grid gap-3 text-sm md:grid-cols-4">
+        <Assumption label="Universe" value={run.strategySnapshot.universe} />
+        <Assumption label="Benchmark" value={run.benchmark} />
+        <Assumption label="Portfolio" value={run.strategySnapshot.portfolioSize} />
+        <Assumption label="Rebalance" value={run.strategySnapshot.rebalance} />
+      </div>
+
+      <div className="mt-5 grid gap-3 text-sm md:grid-cols-4">
+        <Assumption label="Total Return" value={metricValue(run, "Total Return")} />
+        <Assumption label="Sharpe" value={metricValue(run, "Sharpe Ratio")} />
+        <Assumption label="Max Drawdown" value={metricValue(run, "Max Drawdown")} />
+        <Assumption label="Cost Impact" value={metricValue(run, "Cost Impact")} />
+      </div>
+
+      <div className="mt-5 rounded-md border border-dashed border-borderSoft bg-panelMuted p-4">
+        <div className="text-sm font-semibold">Research-style interpretation</div>
+        <p className="mt-2 text-sm leading-6 text-textMuted">{notes}</p>
       </div>
     </section>
   );
@@ -520,6 +600,10 @@ function formatRunDate(date: string) {
 
 function formatTickers(tickers: string[]) {
   return tickers.length > 0 ? tickers.join(", ") : "None";
+}
+
+function metricValue(run: BacktestRun, label: string) {
+  return run.backtestResultSnapshot.metrics.find((metric) => metric.label === label)?.value ?? "n/a";
 }
 
 function toggleComparisonRun(current: string[], runId: string) {

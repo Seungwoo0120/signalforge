@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/page-header";
 import { ResultsTable } from "@/components/results-table";
 import { StrategyConfigCard } from "@/components/strategy-config-card";
 import { useBacktestRuns } from "@/hooks/use-backtest-runs";
+import { useStrategyPresets } from "@/hooks/use-strategy-presets";
 import { useStrategy } from "@/providers/strategy-provider";
 import { runMockBacktest as calculateMockBacktest } from "@/services/mock-backtest-service";
 import { generateMockResearchNotes } from "@/services/mock-research-service";
@@ -20,6 +21,7 @@ export function DashboardPage() {
   const router = useRouter();
   const { strategy, runMockBacktest } = useStrategy();
   const { latestRun, saveRun } = useBacktestRuns();
+  const { latestPreset, userPresets } = useStrategyPresets();
   const backtest = calculateMockBacktest(strategy);
   const screener = runMockScreener(strategy);
   const notes = generateMockResearchNotes(strategy, backtest, screener);
@@ -80,6 +82,12 @@ export function DashboardPage() {
           </div>
           <LatestRunSummary latestRun={latestRun} onOpen={() => router.push("/backtest?run=latest")} />
         </div>
+        <WorkflowSummary
+          latestPresetName={latestPreset?.name ?? "None saved"}
+          presetCount={userPresets.length}
+          onOpenBacktests={() => router.push("/backtest")}
+          onOpenBuilder={() => router.push("/strategy-builder")}
+        />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -106,6 +114,47 @@ export function DashboardPage() {
         </div>
       </section>
     </>
+  );
+}
+
+function WorkflowSummary({
+  latestPresetName,
+  onOpenBacktests,
+  onOpenBuilder,
+  presetCount
+}: {
+  latestPresetName: string;
+  onOpenBacktests: () => void;
+  onOpenBuilder: () => void;
+  presetCount: number;
+}) {
+  return (
+    <div className="mt-5 rounded-md border border-borderSoft bg-panelMuted p-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <div className="text-sm font-semibold">Workflow Library</div>
+          <p className="mt-1 text-sm leading-6 text-textMuted">
+            {presetCount} saved strategy presets / Latest preset: {latestPresetName}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            className="rounded-md border border-borderSoft bg-panel px-3 py-2 text-sm font-semibold transition hover:border-accent hover:text-accent"
+            type="button"
+            onClick={onOpenBuilder}
+          >
+            Open Strategy Builder
+          </button>
+          <button
+            className="rounded-md border border-borderSoft bg-panel px-3 py-2 text-sm font-semibold transition hover:border-accent hover:text-accent"
+            type="button"
+            onClick={onOpenBacktests}
+          >
+            View Backtest Runs
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

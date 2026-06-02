@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { PageHeader } from "@/components/page-header";
 import { StrategyConfigCard } from "@/components/strategy-config-card";
+import { StrategyPresetsPanel } from "@/components/strategy-presets-panel";
 import {
   benchmarkOptions,
   portfolioSizeOptions,
@@ -25,7 +26,7 @@ import type {
 } from "@/types/strategy";
 
 export function StrategyBuilderPage() {
-  const { strategy, updateStrategy, updateRules } = useStrategy();
+  const { replaceStrategy, strategy, updateStrategy, updateRules } = useStrategy();
 
   return (
     <>
@@ -171,6 +172,10 @@ export function StrategyBuilderPage() {
         </div>
 
         <StrategyConfigCard strategy={strategy} />
+      </section>
+
+      <section className="mt-6">
+        <StrategyPresetsPanel currentStrategy={strategy} onLoadPreset={replaceStrategy} />
       </section>
     </>
   );

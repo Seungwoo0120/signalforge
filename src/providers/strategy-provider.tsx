@@ -9,6 +9,7 @@ type StrategyContextValue = {
   strategy: StrategyConfig;
   updateStrategy: (updates: Partial<StrategyConfig>) => void;
   updateRules: (updates: Partial<StrategyConfig["rules"]>) => void;
+  replaceStrategy: (strategy: StrategyConfig) => void;
   runMockBacktest: () => void;
   lastRunAt: string | null;
 };
@@ -51,6 +52,9 @@ export function StrategyProvider({ children }: { children: ReactNode }) {
       },
       updateRules: (updates) => {
         setStrategy((current) => ({ ...current, rules: { ...current.rules, ...updates } }));
+      },
+      replaceStrategy: (nextStrategy) => {
+        setStrategy(nextStrategy);
       },
       runMockBacktest: () => {
         setLastRunAt(new Date().toISOString());
