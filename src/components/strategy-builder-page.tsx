@@ -56,7 +56,14 @@ export function StrategyBuilderPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-5 lg:grid-cols-2">
+          <div className="mt-6 rounded-md border border-borderSoft bg-panelMuted p-4">
+            <div className="text-sm font-semibold">Portfolio setup</div>
+            <p className="mt-1 text-sm leading-6 text-textMuted">
+              These inputs define the mock universe, benchmark, rebalance cadence, and cost assumptions.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-2">
             <Field label="Strategy name">
               <input
                 className="h-11 w-full rounded-md border border-borderSoft bg-panelMuted px-3 text-sm font-medium outline-none transition focus:border-accent"
@@ -134,6 +141,9 @@ export function StrategyBuilderPage() {
 
           <div className="mt-8 border-t border-borderSoft pt-6">
             <h3 className="text-sm font-semibold">Signal rules</h3>
+            <p className="mt-1 text-sm leading-6 text-textMuted">
+              Rules are transparent filters for the mock screener and backtest service.
+            </p>
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
               <ToggleRow
                 checked={strategy.rules.priceAboveSma200}
@@ -211,7 +221,7 @@ function OptionButton({
   return (
     <button
       className={cn(
-        "rounded-md border px-3 py-2 text-sm font-semibold transition",
+        "rounded-md border px-3 py-2 text-sm font-semibold transition focus-visible:shadow-focus",
         active
           ? "border-accent bg-accentSoft text-accent"
           : "border-borderSoft bg-panelMuted text-textMuted hover:border-accent hover:text-textPrimary"
@@ -234,7 +244,7 @@ function ToggleRow({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex min-h-16 items-center justify-between gap-4 rounded-md border border-borderSoft bg-panelMuted p-4">
+    <label className="flex min-h-16 items-center justify-between gap-4 rounded-md border border-borderSoft bg-panelMuted p-4 transition focus-within:border-accent">
       <span className="text-sm font-semibold">{label}</span>
       <input
         checked={checked}

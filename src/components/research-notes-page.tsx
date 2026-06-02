@@ -79,8 +79,8 @@ export function ResearchNotesPage() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-md border border-dashed border-borderSoft bg-panel p-5 shadow-panel">
-        <div className="text-sm font-semibold">Placeholder scope</div>
+      <section className="mt-6 rounded-md border border-dashed border-borderSoft bg-panelMuted p-5">
+        <div className="text-sm font-semibold">Research scope and disclaimer</div>
         <p className="mt-2 text-sm leading-6 text-textMuted">{notes.disclaimer}</p>
       </section>
     </>

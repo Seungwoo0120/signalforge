@@ -22,7 +22,8 @@ module.exports = {
         warning: "hsl(var(--warning))"
       },
       boxShadow: {
-        panel: "0 18px 45px rgba(15, 23, 42, 0.08)"
+        panel: "0 16px 38px rgba(15, 23, 42, 0.07)",
+        focus: "0 0 0 3px hsl(var(--accent-soft))"
       }
     }
   },

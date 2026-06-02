@@ -42,15 +42,20 @@ export function StrategyPresetsPanel({
         </div>
       </div>
 
-      <div className="mt-5 grid gap-3 md:grid-cols-[1fr_1.2fr_auto]">
+      <div className="mt-5 rounded-md border border-borderSoft bg-panelMuted p-4">
+        <div className="text-sm font-semibold">Save current configuration</div>
+        <p className="mt-1 text-sm leading-6 text-textMuted">
+          Save the current strategy state as a browser-local preset for quick reuse.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-[1fr_1.2fr_auto]">
         <input
-          className="h-11 rounded-md border border-borderSoft bg-panelMuted px-3 text-sm font-medium outline-none transition focus:border-accent"
+          className="h-11 rounded-md border border-borderSoft bg-panel px-3 text-sm font-medium outline-none transition focus:border-accent"
           placeholder="Preset name"
           value={presetName}
           onChange={(event) => setPresetName(event.target.value)}
         />
         <input
-          className="h-11 rounded-md border border-borderSoft bg-panelMuted px-3 text-sm font-medium outline-none transition focus:border-accent"
+          className="h-11 rounded-md border border-borderSoft bg-panel px-3 text-sm font-medium outline-none transition focus:border-accent"
           placeholder="Optional description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
@@ -62,6 +67,7 @@ export function StrategyPresetsPanel({
         >
           Save current strategy
         </button>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-2">
@@ -124,7 +130,7 @@ function PresetCard({
   preset: StrategyPreset;
 }) {
   return (
-    <article className="rounded-md border border-borderSoft bg-panelMuted p-4">
+    <article className="rounded-md border border-borderSoft bg-panelMuted p-4 transition hover:border-accent/40">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-sm font-semibold">{preset.name}</div>
@@ -141,6 +147,11 @@ function PresetCard({
         ) : null}
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
+        {preset.builtIn ? (
+          <span className="rounded-md border border-accent/25 bg-accentSoft px-2.5 py-1 text-xs font-semibold text-accent">
+            Built-in
+          </span>
+        ) : null}
         {preset.tags.map((tag) => (
           <span key={tag} className="rounded-md border border-borderSoft bg-panel px-2.5 py-1 text-xs font-semibold text-textMuted">
             {tag}

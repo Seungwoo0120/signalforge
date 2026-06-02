@@ -103,7 +103,7 @@ export function BacktestPage() {
                 <BarChart3 size={20} />
               </div>
               <div>
-                <div className="mb-2 inline-flex rounded-md border border-borderSoft bg-panelMuted px-2.5 py-1 text-xs font-semibold text-textMuted">
+                <div className="mb-2 inline-flex rounded-md border border-borderSoft bg-panelMuted px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-textMuted">
                   {viewLabel}
                 </div>
                 <h2 className="text-base font-semibold tracking-tight">{displayedStrategy.name}</h2>
@@ -232,7 +232,7 @@ function RecentRuns({
         ) : null}
       </div>
 
-      <div className="mt-4 space-y-2">
+      <div className="mt-4 max-h-[360px] space-y-2 overflow-y-auto pr-1">
         {runs.length === 0 ? (
           <p className="rounded-md border border-dashed border-borderSoft bg-panelMuted p-3 text-sm leading-6 text-textMuted">
             No saved runs yet. Click Run Backtest to create a snapshot.
@@ -250,7 +250,7 @@ function RecentRuns({
               onClick={() => onSelect(run.id)}
             >
               <div className="font-semibold">{run.strategyName}</div>
-              <div className="mt-1 text-xs text-textMuted">
+              <div className="mt-1 text-xs font-medium text-textMuted">
                 {formatRunDate(run.createdAt)} / {run.benchmark}
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
@@ -362,9 +362,9 @@ function RebalanceLog({ rows }: { rows: RebalanceLogRow[] }) {
           Deterministic mock rebalance rows tied to ranking, portfolio size, turnover, and cost assumptions.
         </p>
       </div>
-      <div className="mt-5 overflow-x-auto">
+      <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
         <table className="w-full min-w-[980px] border-collapse text-left text-sm">
-          <thead>
+          <thead className="bg-panelMuted">
             <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
               <th className="py-3 font-semibold">Date</th>
               <th className="py-3 font-semibold">Action</th>
@@ -380,8 +380,8 @@ function RebalanceLog({ rows }: { rows: RebalanceLogRow[] }) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.date} className="border-b border-borderSoft last:border-0">
-                <td className="py-3 font-semibold">{row.date}</td>
+              <tr key={row.date} className="border-b border-borderSoft transition last:border-0 hover:bg-panelMuted/65">
+                <td className="py-3 pl-3 font-semibold">{row.date}</td>
                 <td className="py-3 text-textMuted">{row.action}</td>
                 <td className="py-3 text-textMuted">{row.selectedTickers.join(", ")}</td>
                 <td className="py-3 text-textMuted">{formatTickers(row.addedTickers)}</td>
@@ -461,9 +461,9 @@ function RunComparison({
               </div>
             ))}
           </div>
-          <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[1180px] border-collapse text-left text-sm">
-              <thead>
+      <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
+        <table className="w-full min-w-[1180px] border-collapse text-left text-sm">
+              <thead className="bg-panelMuted">
                 <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
                   <th className="py-3 font-semibold">Strategy</th>
                   <th className="py-3 font-semibold">Run Date</th>
@@ -486,8 +486,8 @@ function RunComparison({
               </thead>
               <tbody>
                 {comparison.rows.map((row) => (
-                  <tr key={row.runId} className="border-b border-borderSoft last:border-0">
-                    <td className="py-3 font-semibold">{row.strategyName}</td>
+                  <tr key={row.runId} className="border-b border-borderSoft transition last:border-0 hover:bg-panelMuted/65">
+                    <td className="py-3 pl-3 font-semibold">{row.strategyName}</td>
                     <td className="py-3 text-textMuted">{formatRunDate(row.runDate)}</td>
                     <td className="py-3 text-textMuted">{row.universe}</td>
                     <td className="py-3">{row.benchmark}</td>
@@ -548,9 +548,9 @@ function SensitivityTable({ results }: { results: SensitivityResult[] }) {
       <p className="mt-1 text-sm leading-6 text-textMuted">
         Deterministic mock variations test whether nearby settings produce similar results.
       </p>
-      <div className="mt-5 overflow-x-auto">
+      <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
         <table className="w-full min-w-[860px] border-collapse text-left text-sm">
-          <thead>
+          <thead className="bg-panelMuted">
             <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
               <th className="py-3 font-semibold">Scenario</th>
               <th className="py-3 font-semibold">Variation</th>
@@ -563,8 +563,8 @@ function SensitivityTable({ results }: { results: SensitivityResult[] }) {
           </thead>
           <tbody>
             {results.map((result) => (
-              <tr key={result.id} className="border-b border-borderSoft last:border-0">
-                <td className="py-3 font-semibold">{result.scenario}</td>
+              <tr key={result.id} className="border-b border-borderSoft transition last:border-0 hover:bg-panelMuted/65">
+                <td className="py-3 pl-3 font-semibold">{result.scenario}</td>
                 <td className="py-3 text-textMuted">{result.variation}</td>
                 <td className="py-3">{formatPercent(result.totalReturn)}</td>
                 <td className="py-3">{result.sharpe.toFixed(2)}</td>

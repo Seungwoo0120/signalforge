@@ -43,7 +43,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-canvas text-textPrimary">
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-72 border-r border-borderSoft bg-panel/90 px-5 py-6 backdrop-blur xl:block">
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-72 border-r border-borderSoft bg-panel/95 px-5 py-6 shadow-panel backdrop-blur xl:block">
         <Link className="flex items-center gap-3" href="/">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accent text-white">
             <CandlestickChart size={21} />
@@ -56,7 +56,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </div>
         </Link>
 
-        <nav className="mt-10 space-y-1">
+        <nav className="mt-10 space-y-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = item.href === pathname;
@@ -64,9 +64,9 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <Link
                 key={item.label}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-textMuted transition",
-                  active && "bg-accentSoft text-accent",
-                  !active && "hover:bg-panelMuted hover:text-textPrimary"
+                  "flex items-center gap-3 rounded-md border px-3 py-2.5 text-sm font-medium text-textMuted transition",
+                  active && "border-accent/30 bg-accentSoft text-accent shadow-sm",
+                  !active && "border-transparent hover:border-borderSoft hover:bg-panelMuted hover:text-textPrimary"
                 )}
                 href={item.href}
               >
@@ -87,7 +87,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="xl:pl-72">
-        <header className="sticky top-0 z-10 border-b border-borderSoft bg-canvas/85 backdrop-blur">
+        <header className="sticky top-0 z-10 border-b border-borderSoft bg-canvas/90 backdrop-blur">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3 xl:hidden">
               <div className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-white">
@@ -100,7 +100,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <h1 className="mt-1 text-2xl font-semibold tracking-tight">{activeItem.title}</h1>
             </div>
             <div className="flex items-center gap-3">
-              <label className="hidden items-center gap-2 rounded-md border border-borderSoft bg-panel px-3 py-2 text-sm text-textMuted sm:flex">
+              <label className="hidden items-center gap-2 rounded-md border border-borderSoft bg-panel px-3 py-2 text-sm text-textMuted shadow-sm sm:flex">
                 Benchmark
                 <select
                   className="bg-transparent text-sm font-semibold text-textPrimary outline-none"
@@ -127,8 +127,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 <Link
                   key={item.label}
                   className={cn(
-                    "inline-flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-textMuted",
-                    active && "bg-accentSoft text-accent"
+                    "inline-flex shrink-0 items-center gap-2 rounded-md border border-transparent px-3 py-2 text-sm font-medium text-textMuted",
+                    active && "border-accent/30 bg-accentSoft text-accent"
                   )}
                   href={item.href}
                 >
