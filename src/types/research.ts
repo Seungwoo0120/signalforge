@@ -4,6 +4,7 @@ export type ResearchSectionId =
   | "overfitting"
   | "costs"
   | "benchmark"
+  | "stability"
   | "improvements";
 
 export type ResearchNoteSection = {

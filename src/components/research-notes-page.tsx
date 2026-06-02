@@ -8,6 +8,7 @@ import { useStrategy } from "@/providers/strategy-provider";
 import { runMockBacktest } from "@/services/mock-backtest-service";
 import { generateMockResearchNotes } from "@/services/mock-research-service";
 import { runMockScreener } from "@/services/mock-screener-service";
+import { runMockSensitivityAnalysis } from "@/services/mock-sensitivity-service";
 import type { ResearchSectionId } from "@/types/research";
 
 const sectionIcons: Record<ResearchSectionId, typeof CheckCircle2> = {
@@ -16,6 +17,7 @@ const sectionIcons: Record<ResearchSectionId, typeof CheckCircle2> = {
   overfitting: AlertTriangle,
   costs: AlertTriangle,
   benchmark: ShieldAlert,
+  stability: ShieldAlert,
   improvements: Lightbulb
 };
 
@@ -24,7 +26,8 @@ export function ResearchNotesPage() {
   const enabledRules = getStrategyRules(strategy).filter((rule) => rule.enabled);
   const backtest = runMockBacktest(strategy);
   const screener = runMockScreener(strategy);
-  const notes = generateMockResearchNotes(strategy, backtest, screener);
+  const sensitivity = runMockSensitivityAnalysis(strategy);
+  const notes = generateMockResearchNotes(strategy, backtest, screener, sensitivity);
 
   return (
     <>

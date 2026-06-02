@@ -1,7 +1,7 @@
 "use client";
 
-import { BarChart3, Clock, History, Play, RotateCcw, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { BarChart3, Clock, GitCompareArrows, History, Play, RotateCcw, ShieldCheck, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BenchmarkComparison } from "@/components/benchmark-comparison";
 import { DrawdownChart, EquityCurveChart, MonthlyReturnsChart } from "@/components/dashboard-charts";
@@ -11,14 +11,18 @@ import { StrategyConfigCard } from "@/components/strategy-config-card";
 import { useBacktestRuns } from "@/hooks/use-backtest-runs";
 import { useStrategy } from "@/providers/strategy-provider";
 import { runMockBacktest as calculateMockBacktest } from "@/services/mock-backtest-service";
+import { compareBacktestRuns } from "@/services/mock-run-comparison-service";
 import { runMockScreener } from "@/services/mock-screener-service";
+import { runMockSensitivityAnalysis } from "@/services/mock-sensitivity-service";
 import type { BacktestRun, RebalanceLogRow } from "@/types/backtest";
+import type { RunComparisonResult, SensitivityAnalysis, SensitivityResult } from "@/types/sensitivity";
 import type { StrategyConfig } from "@/types/strategy";
 
 export function BacktestPage() {
   const { strategy, lastRunAt, runMockBacktest } = useStrategy();
   const { runs, latestRun, saveRun, clearRuns } = useBacktestRuns();
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
+  const [comparisonRunIds, setComparisonRunIds] = useState<string[]>([]);
   const selectedRun = runs.find((run) => run.id === selectedRunId) ?? null;
   const previewBacktest = calculateMockBacktest(strategy);
   const previewScreener = runMockScreener(strategy);
@@ -26,6 +30,8 @@ export function BacktestPage() {
   const displayedStrategy = selectedRun?.strategySnapshot ?? strategy;
   const viewLabel = selectedRun ? "Saved Run Snapshot" : "Current Strategy Preview";
   const metrics = backtest.metrics;
+  const sensitivity = runMockSensitivityAnalysis(displayedStrategy);
+  const comparison = useMemo(() => compareBacktestRuns(runs, comparisonRunIds), [comparisonRunIds, runs]);
   const runLabel = lastRunAt
     ? new Intl.DateTimeFormat("en", {
         month: "short",
@@ -41,6 +47,14 @@ export function BacktestPage() {
       setSelectedRunId(latestRun.id);
     }
   }, [latestRun]);
+
+  useEffect(() => {
+    setComparisonRunIds((current) => {
+      const validIds = current.filter((runId) => runs.some((run) => run.id === runId));
+      if (validIds.length > 0) return validIds.slice(0, 4);
+      return runs.slice(0, 4).map((run) => run.id);
+    });
+  }, [runs]);
 
   function handleRunBacktest() {
     const run = saveRun({
@@ -114,6 +128,7 @@ export function BacktestPage() {
           onClear={() => {
             clearRuns();
             setSelectedRunId(null);
+            setComparisonRunIds([]);
           }}
           onSelect={setSelectedRunId}
         />
@@ -142,6 +157,22 @@ export function BacktestPage() {
       <section className="mt-6 grid gap-6 xl:grid-cols-[0.72fr_1.28fr]">
         <AssumptionsPanel strategy={displayedStrategy} />
         <RebalanceLog rows={backtest.rebalanceLog} />
+      </section>
+
+      <section className="mt-6">
+        <RunComparison
+          comparison={comparison}
+          comparisonRunIds={comparisonRunIds}
+          runs={runs}
+          onToggleRun={(runId) => {
+            setComparisonRunIds((current) => toggleComparisonRun(current, runId));
+          }}
+        />
+      </section>
+
+      <section className="mt-6 grid gap-6 xl:grid-cols-[360px_1fr]">
+        <StabilityScorePanel sensitivity={sensitivity} />
+        <SensitivityTable results={sensitivity.results} />
       </section>
     </>
   );
@@ -289,6 +320,186 @@ function RebalanceLog({ rows }: { rows: RebalanceLogRow[] }) {
   );
 }
 
+function RunComparison({
+  comparison,
+  comparisonRunIds,
+  runs,
+  onToggleRun
+}: {
+  comparison: RunComparisonResult;
+  comparisonRunIds: string[];
+  runs: BacktestRun[];
+  onToggleRun: (runId: string) => void;
+}) {
+  return (
+    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-panelMuted text-textMuted">
+            <GitCompareArrows size={19} />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold tracking-tight">Run Comparison</h2>
+            <p className="mt-1 text-sm leading-6 text-textMuted">
+              Compare 2 to 4 saved local runs. This is analytical context, not investment advice.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {runs.slice(0, 10).map((run) => {
+            const selected = comparisonRunIds.includes(run.id);
+            return (
+              <button
+                key={run.id}
+                className={`rounded-md border px-3 py-2 text-sm font-semibold transition ${
+                  selected
+                    ? "border-accent bg-accentSoft text-accent"
+                    : "border-borderSoft bg-panelMuted text-textMuted hover:border-accent"
+                }`}
+                type="button"
+                onClick={() => onToggleRun(run.id)}
+              >
+                {run.strategyName}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {runs.length === 0 ? (
+        <p className="mt-5 rounded-md border border-dashed border-borderSoft bg-panelMuted p-4 text-sm leading-6 text-textMuted">
+          No saved runs yet. Run a backtest first to unlock comparison.
+        </p>
+      ) : (
+        <>
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {comparison.highlights.map((highlight) => (
+              <div key={highlight.label} className="rounded-md border border-borderSoft bg-panelMuted p-4">
+                <div className="text-sm text-textMuted">{highlight.label}</div>
+                <div className="mt-2 text-xl font-semibold tracking-tight">{highlight.value}</div>
+                <div className="mt-1 text-sm text-textMuted">{highlight.run.strategyName}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[1180px] border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
+                  <th className="py-3 font-semibold">Strategy</th>
+                  <th className="py-3 font-semibold">Run Date</th>
+                  <th className="py-3 font-semibold">Universe</th>
+                  <th className="py-3 font-semibold">Benchmark</th>
+                  <th className="py-3 font-semibold">Portfolio</th>
+                  <th className="py-3 font-semibold">Rebalance</th>
+                  <th className="py-3 font-semibold">Cost</th>
+                  <th className="py-3 font-semibold">Return</th>
+                  <th className="py-3 font-semibold">CAGR</th>
+                  <th className="py-3 font-semibold">Sharpe</th>
+                  <th className="py-3 font-semibold">Drawdown</th>
+                  <th className="py-3 font-semibold">Vol</th>
+                  <th className="py-3 font-semibold">Win Rate</th>
+                  <th className="py-3 font-semibold">Alpha</th>
+                  <th className="py-3 font-semibold">Beta</th>
+                  <th className="py-3 font-semibold">Turnover</th>
+                  <th className="py-3 font-semibold">Cost Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparison.rows.map((row) => (
+                  <tr key={row.runId} className="border-b border-borderSoft last:border-0">
+                    <td className="py-3 font-semibold">{row.strategyName}</td>
+                    <td className="py-3 text-textMuted">{formatRunDate(row.runDate)}</td>
+                    <td className="py-3 text-textMuted">{row.universe}</td>
+                    <td className="py-3">{row.benchmark}</td>
+                    <td className="py-3">{row.portfolioSize}</td>
+                    <td className="py-3">{row.rebalance}</td>
+                    <td className="py-3">{row.transactionCost}</td>
+                    <td className="py-3">{formatPercent(row.totalReturn)}</td>
+                    <td className="py-3">{formatPercent(row.cagr)}</td>
+                    <td className="py-3">{row.sharpe.toFixed(2)}</td>
+                    <td className="py-3">{formatPercent(row.maxDrawdown)}</td>
+                    <td className="py-3">{formatPercent(row.volatility)}</td>
+                    <td className="py-3">{formatPercent(row.winRate)}</td>
+                    <td className="py-3">{formatPercent(row.alpha)}</td>
+                    <td className="py-3">{row.beta.toFixed(2)}</td>
+                    <td className="py-3">{row.turnover.toFixed(2)}x</td>
+                    <td className="py-3">{formatPercent(row.transactionCostImpact)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+function StabilityScorePanel({ sensitivity }: { sensitivity: SensitivityAnalysis }) {
+  return (
+    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accentSoft text-accent">
+          <ShieldCheck size={19} />
+        </div>
+        <div>
+          <h2 className="text-base font-semibold tracking-tight">Stability Score</h2>
+          <div className="mt-2 text-3xl font-semibold tracking-tight">{sensitivity.stabilityScore}</div>
+        </div>
+      </div>
+      <p className="mt-4 text-sm leading-6 text-textMuted">{sensitivity.scoreDetail}</p>
+      {sensitivity.overfittingWarning ? (
+        <p className="mt-3 rounded-md border border-dashed border-borderSoft bg-panelMuted p-3 text-sm leading-6 text-textMuted">
+          {sensitivity.overfittingWarning}
+        </p>
+      ) : null}
+      <div className="mt-4 grid gap-3 text-sm">
+        <Assumption label="Cost sensitivity" value={sensitivity.transactionCostSensitivity} />
+        <Assumption label="Portfolio sensitivity" value={sensitivity.portfolioSensitivity} />
+      </div>
+    </section>
+  );
+}
+
+function SensitivityTable({ results }: { results: SensitivityResult[] }) {
+  return (
+    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+      <h2 className="text-base font-semibold tracking-tight">Parameter Sensitivity</h2>
+      <p className="mt-1 text-sm leading-6 text-textMuted">
+        Deterministic mock variations test whether nearby settings produce similar results.
+      </p>
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+          <thead>
+            <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
+              <th className="py-3 font-semibold">Scenario</th>
+              <th className="py-3 font-semibold">Variation</th>
+              <th className="py-3 font-semibold">Total Return</th>
+              <th className="py-3 font-semibold">Sharpe</th>
+              <th className="py-3 font-semibold">Max Drawdown</th>
+              <th className="py-3 font-semibold">Turnover</th>
+              <th className="py-3 font-semibold">Stability Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((result) => (
+              <tr key={result.id} className="border-b border-borderSoft last:border-0">
+                <td className="py-3 font-semibold">{result.scenario}</td>
+                <td className="py-3 text-textMuted">{result.variation}</td>
+                <td className="py-3">{formatPercent(result.totalReturn)}</td>
+                <td className="py-3">{result.sharpe.toFixed(2)}</td>
+                <td className="py-3">{formatPercent(result.maxDrawdown)}</td>
+                <td className="py-3">{result.turnover.toFixed(2)}x</td>
+                <td className="py-3 text-textMuted">{result.stabilityNote}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 function Assumption({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-md bg-panelMuted p-3">
@@ -309,4 +520,13 @@ function formatRunDate(date: string) {
 
 function formatTickers(tickers: string[]) {
   return tickers.length > 0 ? tickers.join(", ") : "None";
+}
+
+function toggleComparisonRun(current: string[], runId: string) {
+  if (current.includes(runId)) return current.filter((id) => id !== runId);
+  return [...current, runId].slice(-4);
+}
+
+function formatPercent(value: number) {
+  return `${value.toFixed(1)}%`;
 }

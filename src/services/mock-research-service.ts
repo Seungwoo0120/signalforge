@@ -1,12 +1,14 @@
 import type { BacktestResult } from "@/types/backtest";
 import type { ResearchNotes } from "@/types/research";
 import type { ScreenerResult } from "@/types/screener";
+import type { SensitivityAnalysis } from "@/types/sensitivity";
 import type { StrategyConfig } from "@/types/strategy";
 
 export function generateMockResearchNotes(
   strategy: StrategyConfig,
   backtest: BacktestResult,
-  screener: ScreenerResult
+  screener: ScreenerResult,
+  sensitivity?: SensitivityAnalysis
 ): ResearchNotes {
   const returnGap = backtest.rawMetrics.totalReturn - backtest.rawMetrics.benchmarkReturn;
   const costImpact = backtest.rawMetrics.transactionCostImpact;
@@ -42,6 +44,13 @@ export function generateMockResearchNotes(
         id: "benchmark",
         title: "Benchmark interpretation",
         body: `Alpha and beta are calculated against ${strategy.benchmark}. A higher return does not prove the rules are predictive; it only shows how this deterministic mock setup reacts to the selected assumptions.`
+      },
+      {
+        id: "stability",
+        title: "Stability read",
+        body: sensitivity
+          ? `The current mock stability score is ${sensitivity.stabilityScore}. Transaction cost sensitivity is ${sensitivity.transactionCostSensitivity.toLowerCase()}, and portfolio size sensitivity is ${sensitivity.portfolioSensitivity.toLowerCase()}. ${sensitivity.overfittingWarning ?? "The tested variations do not show severe fragility in this mock setup."}`
+          : "A full stability read compares nearby parameter variations. This prototype treats that output as educational context rather than proof of robustness."
       },
       {
         id: "improvements",
