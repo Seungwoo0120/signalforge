@@ -39,9 +39,9 @@ export function ScreenerPage() {
         description={`${screener.ruleSummary} Results are hypothetical sample data for UI prototyping only.`}
       />
 
-      <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+      <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-1 items-center gap-2 rounded-md border border-borderSoft bg-panelMuted px-3 py-2 transition focus-within:border-accent">
+          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-borderSoft bg-panelMuted px-3 py-2 transition focus-within:border-accent">
             <Search className="text-textMuted" size={17} />
             <input
               className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-textMuted"
@@ -80,8 +80,8 @@ export function ScreenerPage() {
           <Summary label="Filtered" value={String(screener.summary.filtered)} />
         </div>
 
-        <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
-          <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+        <div className="mt-5 max-w-full overflow-x-auto rounded-md border border-borderSoft">
+          <table className="w-full min-w-[920px] border-collapse text-left text-sm">
             <thead className="bg-panelMuted">
               <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
                 <Header>Ticker</Header>
@@ -107,8 +107,8 @@ export function ScreenerPage() {
                     <div className="font-medium">{row.company}</div>
                   </td>
                   <td className="py-3 text-textMuted">{row.sector}</td>
-                  <td className="py-3">{row.momentum.toFixed(1)}%</td>
-                  <td className="py-3">{row.rsi}</td>
+                  <td className="py-3 text-right tabular-nums">{row.momentum.toFixed(1)}%</td>
+                  <td className="py-3 text-right tabular-nums">{row.rsi}</td>
                   <td className="py-3">
                     <SignalPill pass={row.volumeSignal === "Pass"}>{row.volumeSignal}</SignalPill>
                   </td>
@@ -116,7 +116,7 @@ export function ScreenerPage() {
                     <SignalPill pass={row.trendSignal === "Pass"}>{row.trendSignal}</SignalPill>
                   </td>
                   <td className="py-3">
-                    <span className="inline-flex min-w-10 justify-center rounded-md bg-panelMuted px-2.5 py-1 font-semibold">
+                    <span className="inline-flex min-w-10 justify-center rounded-md bg-panelMuted px-2.5 py-1 font-semibold tabular-nums">
                       {row.score}
                     </span>
                   </td>

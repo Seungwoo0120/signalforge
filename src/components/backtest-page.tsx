@@ -95,14 +95,14 @@ export function BacktestPage() {
         }
       />
 
-      <section className="mb-6 grid gap-6 xl:grid-cols-[1fr_360px]">
-        <div className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+      <section className="mb-5 grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accentSoft text-accent">
                 <BarChart3 size={20} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="mb-2 inline-flex rounded-md border border-borderSoft bg-panelMuted px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-textMuted">
                   {viewLabel}
                 </div>
@@ -164,26 +164,26 @@ export function BacktestPage() {
         </section>
       ) : null}
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+      <section className="mt-5 grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
         <EquityCurveChart benchmark={displayedStrategy.benchmark} data={backtest.equityCurve} />
         <StrategyConfigCard strategy={displayedStrategy} />
       </section>
 
-      <section className="mt-6 grid gap-6 lg:grid-cols-2">
+      <section className="mt-5 grid min-w-0 gap-6 lg:grid-cols-2">
         <DrawdownChart benchmark={displayedStrategy.benchmark} data={backtest.drawdown} />
         <MonthlyReturnsChart benchmark={displayedStrategy.benchmark} data={backtest.monthlyReturns} />
       </section>
 
-      <section className="mt-6">
+      <section className="mt-5 min-w-0">
         <BenchmarkComparison benchmark={displayedStrategy.benchmark} stats={backtest.benchmarkStats} />
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[0.72fr_1.28fr]">
+      <section className="mt-5 grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(280px,0.72fr)_minmax(0,1.28fr)]">
         <AssumptionsPanel strategy={displayedStrategy} />
         <RebalanceLog rows={backtest.rebalanceLog} />
       </section>
 
-      <section className="mt-6">
+      <section className="mt-5 min-w-0">
         <RunComparison
           comparison={comparison}
           comparisonRunIds={comparisonRunIds}
@@ -194,7 +194,7 @@ export function BacktestPage() {
         />
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[360px_1fr]">
+      <section className="mt-5 grid min-w-0 items-start gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
         <StabilityScorePanel sensitivity={sensitivity} />
         <SensitivityTable results={sensitivity.results} />
       </section>
@@ -214,7 +214,7 @@ function RecentRuns({
   onSelect: (runId: string) => void;
 }) {
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-panelMuted text-textMuted">
@@ -275,7 +275,7 @@ function RunDetailPanel({
   run: BacktestRun;
 }) {
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <div className="inline-flex rounded-md border border-borderSoft bg-panelMuted px-2.5 py-1 text-xs font-semibold text-textMuted">
@@ -326,7 +326,7 @@ function AssumptionsPanel({ strategy }: { strategy: StrategyConfig }) {
   ];
 
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <h2 className="text-base font-semibold tracking-tight">Run assumptions</h2>
       <p className="mt-1 text-sm leading-6 text-textMuted">
         Hypothetical backtest setup using simulated prototype data. Not financial advice.
@@ -355,42 +355,52 @@ function AssumptionsPanel({ strategy }: { strategy: StrategyConfig }) {
 
 function RebalanceLog({ rows }: { rows: RebalanceLogRow[] }) {
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div>
         <h2 className="text-base font-semibold tracking-tight">Trade / Rebalance Log</h2>
         <p className="mt-1 text-sm leading-6 text-textMuted">
           Deterministic mock rebalance rows tied to ranking, portfolio size, turnover, and cost assumptions.
         </p>
       </div>
-      <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
-        <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+      <div className="mt-5 max-w-full overflow-x-auto rounded-md border border-borderSoft">
+        <table className="w-full min-w-[920px] border-collapse text-left text-sm">
           <thead className="bg-panelMuted">
             <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
-              <th className="py-3 font-semibold">Date</th>
-              <th className="py-3 font-semibold">Action</th>
-              <th className="py-3 font-semibold">Selected</th>
-              <th className="py-3 font-semibold">Added</th>
-              <th className="py-3 font-semibold">Removed</th>
-              <th className="py-3 font-semibold">Weights</th>
-              <th className="py-3 font-semibold">Turnover</th>
-              <th className="py-3 font-semibold">Cost</th>
-              <th className="py-3 font-semibold">Return</th>
-              <th className="py-3 font-semibold">Benchmark</th>
+              <th className="px-3 py-3 font-semibold">Date</th>
+              <th className="px-3 py-3 font-semibold">Action</th>
+              <th className="px-3 py-3 font-semibold">Selected</th>
+              <th className="px-3 py-3 font-semibold">Added</th>
+              <th className="px-3 py-3 font-semibold">Removed</th>
+              <th className="px-3 py-3 font-semibold">Weights</th>
+              <th className="px-3 py-3 text-right font-semibold">Turnover</th>
+              <th className="px-3 py-3 text-right font-semibold">Cost</th>
+              <th className="px-3 py-3 text-right font-semibold">Return</th>
+              <th className="px-3 py-3 text-right font-semibold">Benchmark</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.date} className="border-b border-borderSoft transition last:border-0 hover:bg-panelMuted/65">
-                <td className="py-3 pl-3 font-semibold">{row.date}</td>
-                <td className="py-3 text-textMuted">{row.action}</td>
-                <td className="py-3 text-textMuted">{row.selectedTickers.join(", ")}</td>
-                <td className="py-3 text-textMuted">{formatTickers(row.addedTickers)}</td>
-                <td className="py-3 text-textMuted">{formatTickers(row.removedTickers)}</td>
-                <td className="py-3 text-textMuted">{row.portfolioWeights}</td>
-                <td className="py-3">{row.turnover.toFixed(2)}x</td>
-                <td className="py-3">${row.estimatedTransactionCost.toFixed(2)}</td>
-                <td className="py-3">{row.periodReturn.toFixed(1)}%</td>
-                <td className="py-3">{row.benchmarkReturn.toFixed(1)}%</td>
+                <td className="whitespace-nowrap px-3 py-3 font-semibold">{row.date}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-textMuted">{row.action}</td>
+                <td className="max-w-[260px] px-3 py-3 text-textMuted">
+                  <TickerList tickers={row.selectedTickers} />
+                </td>
+                <td className="max-w-[160px] px-3 py-3 text-textMuted">
+                  <TickerList emptyLabel="None" tickers={row.addedTickers} />
+                </td>
+                <td className="max-w-[160px] px-3 py-3 text-textMuted">
+                  <TickerList emptyLabel="None" tickers={row.removedTickers} />
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 text-textMuted">{row.portfolioWeights}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.turnover.toFixed(2)}x</td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">
+                  ${row.estimatedTransactionCost.toFixed(2)}
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.periodReturn.toFixed(1)}%</td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">
+                  {row.benchmarkReturn.toFixed(1)}%
+                </td>
               </tr>
             ))}
           </tbody>
@@ -412,7 +422,7 @@ function RunComparison({
   onToggleRun: (runId: string) => void;
 }) {
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-panelMuted text-textMuted">
@@ -461,49 +471,51 @@ function RunComparison({
               </div>
             ))}
           </div>
-      <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
-        <table className="w-full min-w-[1180px] border-collapse text-left text-sm">
+          <div className="mt-5 max-w-full overflow-x-auto rounded-md border border-borderSoft">
+            <table className="w-full min-w-[1160px] border-collapse text-left text-sm">
               <thead className="bg-panelMuted">
                 <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
-                  <th className="py-3 font-semibold">Strategy</th>
-                  <th className="py-3 font-semibold">Run Date</th>
-                  <th className="py-3 font-semibold">Universe</th>
-                  <th className="py-3 font-semibold">Benchmark</th>
-                  <th className="py-3 font-semibold">Portfolio</th>
-                  <th className="py-3 font-semibold">Rebalance</th>
-                  <th className="py-3 font-semibold">Cost</th>
-                  <th className="py-3 font-semibold">Return</th>
-                  <th className="py-3 font-semibold">CAGR</th>
-                  <th className="py-3 font-semibold">Sharpe</th>
-                  <th className="py-3 font-semibold">Drawdown</th>
-                  <th className="py-3 font-semibold">Vol</th>
-                  <th className="py-3 font-semibold">Win Rate</th>
-                  <th className="py-3 font-semibold">Alpha</th>
-                  <th className="py-3 font-semibold">Beta</th>
-                  <th className="py-3 font-semibold">Turnover</th>
-                  <th className="py-3 font-semibold">Cost Impact</th>
+                  <th className="px-3 py-3 font-semibold">Strategy</th>
+                  <th className="px-3 py-3 font-semibold">Run Date</th>
+                  <th className="px-3 py-3 font-semibold">Universe</th>
+                  <th className="px-3 py-3 font-semibold">Benchmark</th>
+                  <th className="px-3 py-3 font-semibold">Portfolio</th>
+                  <th className="px-3 py-3 font-semibold">Rebalance</th>
+                  <th className="px-3 py-3 text-right font-semibold">Cost</th>
+                  <th className="px-3 py-3 text-right font-semibold">Return</th>
+                  <th className="px-3 py-3 text-right font-semibold">CAGR</th>
+                  <th className="px-3 py-3 text-right font-semibold">Sharpe</th>
+                  <th className="px-3 py-3 text-right font-semibold">Drawdown</th>
+                  <th className="px-3 py-3 text-right font-semibold">Vol</th>
+                  <th className="px-3 py-3 text-right font-semibold">Win Rate</th>
+                  <th className="px-3 py-3 text-right font-semibold">Alpha</th>
+                  <th className="px-3 py-3 text-right font-semibold">Beta</th>
+                  <th className="px-3 py-3 text-right font-semibold">Turnover</th>
+                  <th className="px-3 py-3 text-right font-semibold">Cost Impact</th>
                 </tr>
               </thead>
               <tbody>
                 {comparison.rows.map((row) => (
                   <tr key={row.runId} className="border-b border-borderSoft transition last:border-0 hover:bg-panelMuted/65">
-                    <td className="py-3 pl-3 font-semibold">{row.strategyName}</td>
-                    <td className="py-3 text-textMuted">{formatRunDate(row.runDate)}</td>
-                    <td className="py-3 text-textMuted">{row.universe}</td>
-                    <td className="py-3">{row.benchmark}</td>
-                    <td className="py-3">{row.portfolioSize}</td>
-                    <td className="py-3">{row.rebalance}</td>
-                    <td className="py-3">{row.transactionCost}</td>
-                    <td className="py-3">{formatPercent(row.totalReturn)}</td>
-                    <td className="py-3">{formatPercent(row.cagr)}</td>
-                    <td className="py-3">{row.sharpe.toFixed(2)}</td>
-                    <td className="py-3">{formatPercent(row.maxDrawdown)}</td>
-                    <td className="py-3">{formatPercent(row.volatility)}</td>
-                    <td className="py-3">{formatPercent(row.winRate)}</td>
-                    <td className="py-3">{formatPercent(row.alpha)}</td>
-                    <td className="py-3">{row.beta.toFixed(2)}</td>
-                    <td className="py-3">{row.turnover.toFixed(2)}x</td>
-                    <td className="py-3">{formatPercent(row.transactionCostImpact)}</td>
+                    <td className="max-w-[220px] px-3 py-3 font-semibold">{row.strategyName}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-textMuted">{formatRunDate(row.runDate)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-textMuted">{row.universe}</td>
+                    <td className="whitespace-nowrap px-3 py-3">{row.benchmark}</td>
+                    <td className="whitespace-nowrap px-3 py-3">{row.portfolioSize}</td>
+                    <td className="whitespace-nowrap px-3 py-3">{row.rebalance}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.transactionCost}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(row.totalReturn)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(row.cagr)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.sharpe.toFixed(2)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(row.maxDrawdown)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(row.volatility)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(row.winRate)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(row.alpha)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.beta.toFixed(2)}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.turnover.toFixed(2)}x</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">
+                      {formatPercent(row.transactionCostImpact)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -517,7 +529,7 @@ function RunComparison({
 
 function StabilityScorePanel({ sensitivity }: { sensitivity: SensitivityAnalysis }) {
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accentSoft text-accent">
           <ShieldCheck size={19} />
@@ -543,34 +555,34 @@ function StabilityScorePanel({ sensitivity }: { sensitivity: SensitivityAnalysis
 
 function SensitivityTable({ results }: { results: SensitivityResult[] }) {
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <h2 className="text-base font-semibold tracking-tight">Parameter Sensitivity</h2>
       <p className="mt-1 text-sm leading-6 text-textMuted">
         Deterministic mock variations test whether nearby settings produce similar results.
       </p>
-      <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
-        <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+      <div className="mt-5 max-w-full overflow-x-auto rounded-md border border-borderSoft">
+        <table className="w-full min-w-[820px] border-collapse text-left text-sm">
           <thead className="bg-panelMuted">
             <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
-              <th className="py-3 font-semibold">Scenario</th>
-              <th className="py-3 font-semibold">Variation</th>
-              <th className="py-3 font-semibold">Total Return</th>
-              <th className="py-3 font-semibold">Sharpe</th>
-              <th className="py-3 font-semibold">Max Drawdown</th>
-              <th className="py-3 font-semibold">Turnover</th>
-              <th className="py-3 font-semibold">Stability Note</th>
+              <th className="px-3 py-3 font-semibold">Scenario</th>
+              <th className="px-3 py-3 font-semibold">Variation</th>
+              <th className="px-3 py-3 text-right font-semibold">Total Return</th>
+              <th className="px-3 py-3 text-right font-semibold">Sharpe</th>
+              <th className="px-3 py-3 text-right font-semibold">Max Drawdown</th>
+              <th className="px-3 py-3 text-right font-semibold">Turnover</th>
+              <th className="px-3 py-3 font-semibold">Stability Note</th>
             </tr>
           </thead>
           <tbody>
             {results.map((result) => (
               <tr key={result.id} className="border-b border-borderSoft transition last:border-0 hover:bg-panelMuted/65">
-                <td className="py-3 pl-3 font-semibold">{result.scenario}</td>
-                <td className="py-3 text-textMuted">{result.variation}</td>
-                <td className="py-3">{formatPercent(result.totalReturn)}</td>
-                <td className="py-3">{result.sharpe.toFixed(2)}</td>
-                <td className="py-3">{formatPercent(result.maxDrawdown)}</td>
-                <td className="py-3">{result.turnover.toFixed(2)}x</td>
-                <td className="py-3 text-textMuted">{result.stabilityNote}</td>
+                <td className="whitespace-nowrap px-3 py-3 font-semibold">{result.scenario}</td>
+                <td className="px-3 py-3 text-textMuted">{result.variation}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(result.totalReturn)}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{result.sharpe.toFixed(2)}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{formatPercent(result.maxDrawdown)}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{result.turnover.toFixed(2)}x</td>
+                <td className="max-w-[280px] px-3 py-3 text-textMuted">{result.stabilityNote}</td>
               </tr>
             ))}
           </tbody>
@@ -598,8 +610,21 @@ function formatRunDate(date: string) {
   }).format(new Date(date));
 }
 
-function formatTickers(tickers: string[]) {
-  return tickers.length > 0 ? tickers.join(", ") : "None";
+function TickerList({ emptyLabel, tickers }: { emptyLabel?: string; tickers: string[] }) {
+  if (tickers.length === 0) return <span className="text-textMuted">{emptyLabel ?? "None"}</span>;
+
+  return (
+    <div className="flex max-w-full flex-wrap gap-1.5">
+      {tickers.map((ticker) => (
+        <span
+          key={ticker}
+          className="inline-flex rounded-md border border-borderSoft bg-panelMuted px-2 py-0.5 text-xs font-semibold text-textPrimary"
+        >
+          {ticker}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 function metricValue(run: BacktestRun, label: string) {

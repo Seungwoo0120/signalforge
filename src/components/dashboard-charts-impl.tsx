@@ -47,7 +47,7 @@ export function EquityCurveChart({ benchmark, data }: { benchmark: Benchmark; da
       subtitle={`Growth of $100, mock data, compared with ${benchmark}`}
       action={<LegendPill label={`Benchmark: ${benchmark}`} />}
     >
-      <div className="h-[320px] min-w-0">
+      <div className="h-[280px] min-w-0">
         {mounted ? (
           <ResponsiveContainer
             height="100%"

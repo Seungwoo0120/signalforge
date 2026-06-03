@@ -61,9 +61,9 @@ export function DashboardPage() {
         }
       />
 
-      <section className="mb-6 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+      <section className="mb-5 min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accentSoft text-accent">
                 <Activity size={20} />
@@ -96,19 +96,19 @@ export function DashboardPage() {
         ))}
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+      <section className="mt-5 grid items-start gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)]">
         <EquityCurveChart benchmark={strategy.benchmark} data={backtest.equityCurve} />
         <StrategyConfigCard strategy={strategy} />
       </section>
 
-      <section className="mt-6 grid gap-6 lg:grid-cols-2">
+      <section className="mt-5 grid min-w-0 gap-6 lg:grid-cols-2">
         <DrawdownChart benchmark={strategy.benchmark} data={backtest.drawdown} />
         <MonthlyReturnsChart benchmark={strategy.benchmark} data={backtest.monthlyReturns} />
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_420px]">
+      <section className="mt-5 grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
         <ResultsTable rows={screener.rows.slice(0, 5)} rebalance={strategy.rebalance} />
-        <div className="grid gap-6">
+        <div className="grid min-w-0 gap-6">
           <BenchmarkComparison benchmark={strategy.benchmark} stats={backtest.benchmarkStats} />
           <AiExplanationPanel notes={notes} />
         </div>
@@ -167,7 +167,7 @@ function LatestRunSummary({
 }) {
   if (!latestRun) {
     return (
-      <div className="min-w-[280px] rounded-md border border-dashed border-borderSoft bg-panelMuted p-4">
+      <div className="w-full rounded-md border border-dashed border-borderSoft bg-panelMuted p-4 xl:w-[360px] xl:shrink-0">
         <div className="text-sm font-semibold">Latest Backtest Run</div>
         <p className="mt-2 text-sm leading-6 text-textMuted">
           No saved run yet. Run a mock backtest to store a snapshot of the current strategy.
@@ -185,7 +185,7 @@ function LatestRunSummary({
   }).format(new Date(latestRun.createdAt));
 
   return (
-    <div className="min-w-[300px] rounded-md border border-borderSoft bg-panelMuted p-4">
+    <div className="w-full rounded-md border border-borderSoft bg-panelMuted p-4 xl:w-[360px] xl:shrink-0">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-sm font-semibold">Latest Backtest Run</div>

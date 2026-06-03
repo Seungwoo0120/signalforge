@@ -42,7 +42,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const activeItem = navItems.find((item) => item.href === pathname) ?? navItems[0];
 
   return (
-    <div className="min-h-screen bg-canvas text-textPrimary">
+    <div className="min-h-screen overflow-x-hidden bg-canvas text-textPrimary">
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-72 border-r border-borderSoft bg-panel/95 px-5 py-6 shadow-panel backdrop-blur xl:block">
         <Link className="flex items-center gap-3" href="/">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accent text-white">
@@ -86,7 +86,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <div className="xl:pl-72">
+      <div className="min-w-0 xl:pl-72">
         <header className="sticky top-0 z-10 border-b border-borderSoft bg-canvas/90 backdrop-blur">
           <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3 xl:hidden">
@@ -139,7 +139,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             })}
           </nav>
         </header>
-        <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <main className="mx-auto min-w-0 max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>
   );

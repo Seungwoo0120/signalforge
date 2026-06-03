@@ -9,7 +9,7 @@ export function ResultsTable({
   rebalance: string;
 }) {
   return (
-    <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
+    <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold tracking-tight">Signal Snapshot</h2>
@@ -20,8 +20,8 @@ export function ResultsTable({
         </span>
       </div>
 
-      <div className="mt-5 overflow-x-auto rounded-md border border-borderSoft">
-        <table className="w-full min-w-[760px] border-collapse text-left text-sm">
+      <div className="mt-5 max-w-full overflow-x-auto rounded-md border border-borderSoft">
+        <table className="w-full min-w-[720px] border-collapse text-left text-sm">
           <thead className="bg-panelMuted">
             <tr className="border-b border-borderSoft text-xs uppercase tracking-[0.14em] text-textMuted">
               <th className="py-3 pl-3 font-semibold">Ticker</th>

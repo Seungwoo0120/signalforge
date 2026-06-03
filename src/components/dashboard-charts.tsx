@@ -9,7 +9,7 @@ const EquityCurveChartClient = dynamic(
   () => import("@/components/dashboard-charts-impl").then((mod) => mod.EquityCurveChart),
   {
     ssr: false,
-    loading: () => <ChartFallback title="Strategy Equity Curve" height="h-[320px]" />
+    loading: () => <ChartFallback title="Strategy Equity Curve" height="h-[280px]" />
   }
 );
 
