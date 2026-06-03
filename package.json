@@ -1,6 +1,7 @@
 {
   "name": "signalforge",
   "version": "0.1.0",
+  "description": "Quant strategy research and simulated backtesting platform built with Next.js, TypeScript, Tailwind CSS, and Recharts.",
   "private": true,
   "scripts": {
     "dev": "next dev",

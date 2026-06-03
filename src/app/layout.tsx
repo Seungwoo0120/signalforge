@@ -6,8 +6,8 @@ import { StrategyProvider } from "@/providers/strategy-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SignalForge",
-  description: "Rule-based stock strategy research and backtesting workspace.",
+  title: "SignalForge — Quant Strategy Research Platform",
+  description: "A simulated quant strategy research and backtesting workspace for rule-based equity strategies.",
   icons: {
     icon: "/icon.svg"
   }
