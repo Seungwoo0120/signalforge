@@ -90,7 +90,7 @@ export function DashboardPage() {
         />
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {metrics.map((metric) => (
           <MetricCard key={metric.label} {...metric} />
         ))}

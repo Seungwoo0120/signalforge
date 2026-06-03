@@ -88,7 +88,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
       <div className="xl:pl-72">
         <header className="sticky top-0 z-10 border-b border-borderSoft bg-canvas/90 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3 xl:hidden">
               <div className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-white">
                 <CandlestickChart size={19} />
@@ -139,7 +139,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             })}
           </nav>
         </header>
-        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>
   );

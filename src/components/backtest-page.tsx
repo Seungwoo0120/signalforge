@@ -145,7 +145,7 @@ export function BacktestPage() {
         />
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {metrics.map((metric) => (
           <MetricCard key={metric.label} {...metric} />
         ))}

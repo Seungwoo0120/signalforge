@@ -5,10 +5,12 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { StrategyProvider } from "@/providers/strategy-provider";
 import "./globals.css";
 
-
 export const metadata: Metadata = {
   title: "SignalForge",
-  description: "Rule-based stock strategy research and backtesting workspace."
+  description: "Rule-based stock strategy research and backtesting workspace.",
+  icons: {
+    icon: "/icon.svg"
+  }
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

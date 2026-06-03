@@ -35,6 +35,8 @@ const tooltipStyle = {
   color: "hsl(var(--text-primary))"
 };
 
+const initialChartDimension = { height: 1, width: 1 };
+
 export function EquityCurveChart({ benchmark, data }: { benchmark: Benchmark; data?: ChartPoint[] }) {
   const mounted = useMounted();
   const chartData = data ?? getChartData(benchmark).equity;
@@ -45,51 +47,57 @@ export function EquityCurveChart({ benchmark, data }: { benchmark: Benchmark; da
       subtitle={`Growth of $100, mock data, compared with ${benchmark}`}
       action={<LegendPill label={`Benchmark: ${benchmark}`} />}
     >
-      <div className="h-[320px]">
+      <div className="h-[320px] min-w-0">
         {mounted ? (
-          <ResponsiveContainer height="100%" width="100%">
-          <AreaChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
-            <defs>
-              <linearGradient id="strategyFill" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="5%" stopColor={chartColors.strategy} stopOpacity={0.22} />
-                <stop offset="95%" stopColor={chartColors.strategy} stopOpacity={0.02} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
-            <XAxis
-              dataKey="month"
-              minTickGap={34}
-              stroke={chartColors.text}
-              tickLine={false}
-              axisLine={false}
-              fontSize={12}
-            />
-            <YAxis
-              stroke={chartColors.text}
-              tickLine={false}
-              axisLine={false}
-              fontSize={12}
-              tickFormatter={(value: number) => `$${value}`}
-            />
-            <Tooltip contentStyle={tooltipStyle} cursor={{ stroke: chartColors.grid }} />
-            <Area
-              dataKey="strategy"
-              name="Strategy"
-              type="monotone"
-              stroke={chartColors.strategy}
-              strokeWidth={2.4}
-              fill="url(#strategyFill)"
-            />
-            <Line
-              dataKey="benchmark"
-              name={benchmark}
-              type="monotone"
-              stroke={chartColors.benchmark}
-              strokeDasharray="5 4"
-              strokeWidth={2}
-              dot={false}
-            />
-          </AreaChart>
+          <ResponsiveContainer
+            height="100%"
+            initialDimension={initialChartDimension}
+            minHeight={1}
+            minWidth={1}
+            width="100%"
+          >
+            <AreaChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+              <defs>
+                <linearGradient id="strategyFill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="5%" stopColor={chartColors.strategy} stopOpacity={0.22} />
+                  <stop offset="95%" stopColor={chartColors.strategy} stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="month"
+                minTickGap={34}
+                stroke={chartColors.text}
+                tickLine={false}
+                axisLine={false}
+                fontSize={12}
+              />
+              <YAxis
+                stroke={chartColors.text}
+                tickLine={false}
+                axisLine={false}
+                fontSize={12}
+                tickFormatter={(value: number) => `$${value}`}
+              />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ stroke: chartColors.grid }} />
+              <Area
+                dataKey="strategy"
+                name="Strategy"
+                type="monotone"
+                stroke={chartColors.strategy}
+                strokeWidth={2.4}
+                fill="url(#strategyFill)"
+              />
+              <Line
+                dataKey="benchmark"
+                name={benchmark}
+                type="monotone"
+                stroke={chartColors.benchmark}
+                strokeDasharray="5 4"
+                strokeWidth={2}
+                dot={false}
+              />
+            </AreaChart>
           </ResponsiveContainer>
         ) : (
           <ChartSkeleton />
@@ -105,45 +113,51 @@ export function DrawdownChart({ benchmark, data }: { benchmark: Benchmark; data?
 
   return (
     <ChartContainer title="Drawdown Preview" subtitle="Peak-to-trough declines over the mock test">
-      <div className="h-[265px]">
+      <div className="h-[265px] min-w-0">
         {mounted ? (
-          <ResponsiveContainer height="100%" width="100%">
-          <LineChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
-            <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
-            <XAxis
-              dataKey="month"
-              minTickGap={38}
-              stroke={chartColors.text}
-              tickLine={false}
-              axisLine={false}
-              fontSize={12}
-            />
-            <YAxis
-              stroke={chartColors.text}
-              tickLine={false}
-              axisLine={false}
-              fontSize={12}
-              tickFormatter={(value: number) => `${value}%`}
-            />
-            <Tooltip contentStyle={tooltipStyle} cursor={{ stroke: chartColors.grid }} />
-            <Line
-              dataKey="strategy"
-              name="Strategy"
-              type="monotone"
-              stroke={chartColors.drawdown}
-              strokeWidth={2.2}
-              dot={false}
-            />
-            <Line
-              dataKey="benchmark"
-              name={benchmark}
-              type="monotone"
-              stroke={chartColors.benchmark}
-              strokeDasharray="4 4"
-              strokeWidth={1.8}
-              dot={false}
-            />
-          </LineChart>
+          <ResponsiveContainer
+            height="100%"
+            initialDimension={initialChartDimension}
+            minHeight={1}
+            minWidth={1}
+            width="100%"
+          >
+            <LineChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+              <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="month"
+                minTickGap={38}
+                stroke={chartColors.text}
+                tickLine={false}
+                axisLine={false}
+                fontSize={12}
+              />
+              <YAxis
+                stroke={chartColors.text}
+                tickLine={false}
+                axisLine={false}
+                fontSize={12}
+                tickFormatter={(value: number) => `${value}%`}
+              />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ stroke: chartColors.grid }} />
+              <Line
+                dataKey="strategy"
+                name="Strategy"
+                type="monotone"
+                stroke={chartColors.drawdown}
+                strokeWidth={2.2}
+                dot={false}
+              />
+              <Line
+                dataKey="benchmark"
+                name={benchmark}
+                type="monotone"
+                stroke={chartColors.benchmark}
+                strokeDasharray="4 4"
+                strokeWidth={1.8}
+                dot={false}
+              />
+            </LineChart>
           </ResponsiveContainer>
         ) : (
           <ChartSkeleton />
@@ -159,29 +173,35 @@ export function MonthlyReturnsChart({ benchmark, data }: { benchmark: Benchmark;
 
   return (
     <ChartContainer title="Recent Monthly Returns" subtitle="Mock return distribution by month">
-      <div className="h-[265px]">
+      <div className="h-[265px] min-w-0">
         {mounted ? (
-          <ResponsiveContainer height="100%" width="100%">
-          <BarChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
-            <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
-            <XAxis
-              dataKey="month"
-              stroke={chartColors.text}
-              tickLine={false}
-              axisLine={false}
-              fontSize={12}
-            />
-            <YAxis
-              stroke={chartColors.text}
-              tickLine={false}
-              axisLine={false}
-              fontSize={12}
-              tickFormatter={(value: number) => `${value}%`}
-            />
-            <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--panel-muted))" }} />
-            <Bar dataKey="strategy" name="Strategy" fill={chartColors.strategy} radius={[4, 4, 0, 0]} />
-            <Bar dataKey="benchmark" name={benchmark} fill={chartColors.benchmark} radius={[4, 4, 0, 0]} />
-          </BarChart>
+          <ResponsiveContainer
+            height="100%"
+            initialDimension={initialChartDimension}
+            minHeight={1}
+            minWidth={1}
+            width="100%"
+          >
+            <BarChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
+              <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="month"
+                stroke={chartColors.text}
+                tickLine={false}
+                axisLine={false}
+                fontSize={12}
+              />
+              <YAxis
+                stroke={chartColors.text}
+                tickLine={false}
+                axisLine={false}
+                fontSize={12}
+                tickFormatter={(value: number) => `${value}%`}
+              />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "hsl(var(--panel-muted))" }} />
+              <Bar dataKey="strategy" name="Strategy" fill={chartColors.strategy} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="benchmark" name={benchmark} fill={chartColors.benchmark} radius={[4, 4, 0, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         ) : (
           <ChartSkeleton />
@@ -196,9 +216,15 @@ export function CompactEquityCurve({ benchmark, data }: { benchmark: Benchmark; 
   const chartData = data ?? getChartData(benchmark).equity;
 
   return (
-    <div className="h-[220px]">
+    <div className="h-[220px] min-w-0">
       {mounted ? (
-        <ResponsiveContainer height="100%" width="100%">
+        <ResponsiveContainer
+          height="100%"
+          initialDimension={initialChartDimension}
+          minHeight={1}
+          minWidth={1}
+          width="100%"
+        >
           <AreaChart data={chartData} margin={{ left: -18, right: 8, top: 8, bottom: 0 }}>
             <defs>
               <linearGradient id="compactStrategyFill" x1="0" x2="0" y1="0" y2="1">
