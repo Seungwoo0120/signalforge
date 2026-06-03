@@ -35,6 +35,7 @@ dist
 
 # Dependency directories
 node_modules/
+node_modules_corrupt/
 jspm_packages/
 bower_components/
 web_modules/
@@ -71,6 +72,8 @@ web_modules/
 .vscode-test
 .node_repl_history
 .tern-port
+* 2
+* 2.*
 
 # Vite timestamp files
 vite.config.js.timestamp-*

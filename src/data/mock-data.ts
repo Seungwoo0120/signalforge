@@ -1,74 +1,123 @@
-export type MetricTone = "positive" | "negative" | "neutral";
+import type {
+  Benchmark,
+  BenchmarkStat,
+  ChartPoint,
+  ScreenerRow,
+  StrategyConfig,
+  StrategyMetric,
+  StrategyRule
+} from "@/types/strategy";
 
-export type StrategyRule = {
-  label: string;
-  value: string;
-};
-
-export type StrategyMetric = {
-  label: string;
-  value: string;
-  detail: string;
-  tone: MetricTone;
-};
-
-export const selectedStrategy = {
+export const defaultStrategyConfig: StrategyConfig = {
   name: "Momentum Trend Strategy",
   universe: "Nasdaq 100",
   benchmark: "SPY",
-  status: "Mock backtest",
-  rebalance: "Monthly",
-  holdings: "Top 10 stocks",
+  portfolioSize: "Top 10",
   weighting: "Equal weight",
+  rebalance: "Monthly",
   transactionCost: "0.10%",
-  rules: [
-    { label: "Trend filter", value: "Price above 200-day moving average" },
-    { label: "Momentum", value: "20-day momentum greater than 5%" },
-    { label: "Risk guard", value: "RSI below 70" },
-    { label: "Liquidity", value: "Volume above 20-day average" }
-  ] satisfies StrategyRule[]
+  rules: {
+    priceAboveSma200: true,
+    momentumThreshold: 5,
+    rsiThreshold: 70,
+    volumeAboveAverage: true
+  }
 };
 
-export const riskMetrics: StrategyMetric[] = [
-  {
-    label: "Total Return",
-    value: "128.4%",
-    detail: "+42.6 pts vs SPY",
-    tone: "positive"
-  },
-  {
-    label: "CAGR",
-    value: "18.7%",
-    detail: "5-year mock period",
-    tone: "positive"
-  },
-  {
-    label: "Sharpe Ratio",
-    value: "1.42",
-    detail: "Risk-adjusted return",
-    tone: "positive"
-  },
-  {
-    label: "Max Drawdown",
-    value: "-18.9%",
-    detail: "Largest peak-to-trough decline",
-    tone: "negative"
-  },
-  {
-    label: "Volatility",
-    value: "16.3%",
-    detail: "Annualized",
-    tone: "neutral"
-  },
-  {
-    label: "Win Rate",
-    value: "58.6%",
-    detail: "Monthly observations",
-    tone: "neutral"
-  }
-];
+export const universeOptions = ["Nasdaq 100", "S&P 500"] as const;
+export const benchmarkOptions = ["SPY", "QQQ"] as const;
+export const portfolioSizeOptions = ["Top 5", "Top 10", "Top 20"] as const;
+export const weightingOptions = ["Equal weight"] as const;
+export const rebalanceOptions = ["Weekly", "Monthly", "Quarterly"] as const;
+export const transactionCostOptions = ["0.00%", "0.05%", "0.10%", "0.25%"] as const;
 
-export const equityCurve = [
+export function getStrategyRules(config: StrategyConfig): StrategyRule[] {
+  return [
+    {
+      label: "Trend filter",
+      value: "Price above 200-day moving average",
+      enabled: config.rules.priceAboveSma200
+    },
+    {
+      label: "Momentum",
+      value: `20-day momentum greater than ${config.rules.momentumThreshold}%`,
+      enabled: true
+    },
+    {
+      label: "Risk guard",
+      value: `RSI below ${config.rules.rsiThreshold}`,
+      enabled: true
+    },
+    {
+      label: "Liquidity",
+      value: "Volume above 20-day average",
+      enabled: config.rules.volumeAboveAverage
+    }
+  ];
+}
+
+export function getRiskMetrics(benchmark: Benchmark): StrategyMetric[] {
+  const benchmarkDetail = benchmark === "SPY" ? "+42.6 pts vs SPY" : "+28.3 pts vs QQQ";
+
+  return [
+    {
+      label: "Total Return",
+      value: "128.4%",
+      detail: benchmarkDetail,
+      tone: "positive"
+    },
+    {
+      label: "CAGR",
+      value: "18.7%",
+      detail: "5-year simulated period",
+      tone: "positive"
+    },
+    {
+      label: "Sharpe Ratio",
+      value: "1.42",
+      detail: "Risk-adjusted return",
+      tone: "positive"
+    },
+    {
+      label: "Max Drawdown",
+      value: "-18.9%",
+      detail: "Largest peak-to-trough decline",
+      tone: "negative"
+    },
+    {
+      label: "Volatility",
+      value: "16.3%",
+      detail: "Annualized",
+      tone: "neutral"
+    },
+    {
+      label: "Win Rate",
+      value: "58.6%",
+      detail: "Monthly observations",
+      tone: "neutral"
+    }
+  ];
+}
+
+export function getBacktestMetrics(benchmark: Benchmark): StrategyMetric[] {
+  return [
+    ...getRiskMetrics(benchmark),
+    {
+      label: "Alpha",
+      value: benchmark === "SPY" ? "6.4%" : "4.1%",
+      detail: "Annualized excess return",
+      tone: "positive"
+    },
+    {
+      label: "Beta",
+      value: benchmark === "SPY" ? "0.91" : "0.84",
+      detail: `Relative to ${benchmark}`,
+      tone: "neutral"
+    }
+  ];
+}
+
+export const equityCurve: ChartPoint[] = [
   { month: "Jan 21", strategy: 100, benchmark: 100 },
   { month: "Apr 21", strategy: 112, benchmark: 108 },
   { month: "Jul 21", strategy: 119, benchmark: 113 },
@@ -93,7 +142,12 @@ export const equityCurve = [
   { month: "Apr 26", strategy: 228, benchmark: 186 }
 ];
 
-export const drawdownSeries = [
+export const qqqEquityCurve: ChartPoint[] = equityCurve.map((point, index) => ({
+  ...point,
+  benchmark: Math.round((100 + index * 5.05 + (index % 4) * 2.1) * 10) / 10
+}));
+
+export const drawdownSeries: ChartPoint[] = [
   { month: "Jan 21", strategy: 0, benchmark: 0 },
   { month: "Apr 21", strategy: -2.1, benchmark: -1.4 },
   { month: "Jul 21", strategy: -1.2, benchmark: -2.0 },
@@ -118,7 +172,12 @@ export const drawdownSeries = [
   { month: "Apr 26", strategy: -18.9, benchmark: -9.6 }
 ];
 
-export const monthlyReturns = [
+export const qqqDrawdownSeries: ChartPoint[] = drawdownSeries.map((point, index) => ({
+  ...point,
+  benchmark: Math.round((point.benchmark - (index % 5) * 0.55) * 10) / 10
+}));
+
+export const monthlyReturns: ChartPoint[] = [
   { month: "Nov", strategy: 2.9, benchmark: 1.7 },
   { month: "Dec", strategy: 3.8, benchmark: 2.3 },
   { month: "Jan", strategy: 1.7, benchmark: 1.2 },
@@ -127,52 +186,108 @@ export const monthlyReturns = [
   { month: "Apr", strategy: -7.8, benchmark: -3.4 }
 ];
 
-export const benchmarkStats = [
-  { label: "Alpha", value: "6.4%", helper: "Annualized excess return" },
-  { label: "Beta", value: "0.91", helper: "Relative to SPY" },
-  { label: "Correlation", value: "0.78", helper: "Monthly returns" },
-  { label: "Tracking Error", value: "8.2%", helper: "Annualized" }
-];
+export const qqqMonthlyReturns: ChartPoint[] = monthlyReturns.map((point, index) => ({
+  ...point,
+  benchmark: Math.round((point.benchmark + (index % 2 === 0 ? 0.7 : -0.4)) * 10) / 10
+}));
 
-export const recentSignals = [
+export function getChartData(benchmark: Benchmark) {
+  return {
+    equity: benchmark === "SPY" ? equityCurve : qqqEquityCurve,
+    drawdown: benchmark === "SPY" ? drawdownSeries : qqqDrawdownSeries,
+    monthly: benchmark === "SPY" ? monthlyReturns : qqqMonthlyReturns
+  };
+}
+
+export function getBenchmarkStats(benchmark: Benchmark): BenchmarkStat[] {
+  return [
+    {
+      label: "Alpha",
+      value: benchmark === "SPY" ? "6.4%" : "4.1%",
+      helper: "Annualized excess return"
+    },
+    { label: "Beta", value: benchmark === "SPY" ? "0.91" : "0.84", helper: `Relative to ${benchmark}` },
+    { label: "Correlation", value: benchmark === "SPY" ? "0.78" : "0.74", helper: "Monthly returns" },
+    { label: "Tracking Error", value: benchmark === "SPY" ? "8.2%" : "9.4%", helper: "Annualized" }
+  ];
+}
+
+export const screenerRows: ScreenerRow[] = [
   {
     ticker: "NVDA",
+    company: "NVIDIA Corp.",
     sector: "Semiconductors",
-    momentum: "12.4%",
-    rsi: "64",
-    weight: "10.0%",
+    momentum: 12.4,
+    rsi: 64,
+    volumeSignal: "Pass",
+    trendSignal: "Pass",
+    score: 96,
     status: "Included"
   },
   {
     ticker: "MSFT",
+    company: "Microsoft Corp.",
     sector: "Software",
-    momentum: "8.7%",
-    rsi: "58",
-    weight: "10.0%",
+    momentum: 8.7,
+    rsi: 58,
+    volumeSignal: "Pass",
+    trendSignal: "Pass",
+    score: 90,
     status: "Included"
   },
   {
     ticker: "AVGO",
+    company: "Broadcom Inc.",
     sector: "Semiconductors",
-    momentum: "7.9%",
-    rsi: "61",
-    weight: "10.0%",
+    momentum: 7.9,
+    rsi: 61,
+    volumeSignal: "Pass",
+    trendSignal: "Pass",
+    score: 86,
     status: "Included"
   },
   {
+    ticker: "AMZN",
+    company: "Amazon.com Inc.",
+    sector: "Consumer Discretionary",
+    momentum: 7.2,
+    rsi: 59,
+    volumeSignal: "Watch",
+    trendSignal: "Pass",
+    score: 81,
+    status: "Watchlist"
+  },
+  {
     ticker: "COST",
+    company: "Costco Wholesale Corp.",
     sector: "Retail",
-    momentum: "4.1%",
-    rsi: "55",
-    weight: "0.0%",
+    momentum: 4.1,
+    rsi: 55,
+    volumeSignal: "Pass",
+    trendSignal: "Pass",
+    score: 68,
     status: "Filtered"
   },
   {
     ticker: "TSLA",
+    company: "Tesla Inc.",
     sector: "Automobiles",
-    momentum: "6.8%",
-    rsi: "74",
-    weight: "0.0%",
+    momentum: 6.8,
+    rsi: 74,
+    volumeSignal: "Watch",
+    trendSignal: "Pass",
+    score: 63,
     status: "RSI limit"
+  },
+  {
+    ticker: "META",
+    company: "Meta Platforms Inc.",
+    sector: "Communication Services",
+    momentum: 5.9,
+    rsi: 67,
+    volumeSignal: "Pass",
+    trendSignal: "Fail",
+    score: 59,
+    status: "Filtered"
   }
 ];

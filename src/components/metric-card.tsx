@@ -1,7 +1,7 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
-import { MetricTone } from "@/data/mock-data";
 import { cn } from "@/lib/utils";
+import type { MetricTone } from "@/types/strategy";
 
 const toneStyles: Record<MetricTone, string> = {
   positive: "text-success",
@@ -25,11 +25,13 @@ export function MetricCard({
   return (
     <section className="rounded-md border border-borderSoft bg-panel p-4 shadow-panel">
       <div className="flex items-start justify-between gap-3">
-        <div className="text-sm font-medium text-textMuted">{label}</div>
-        <Icon className={cn("mt-0.5", toneStyles[tone])} size={17} />
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-textMuted">{label}</div>
+        <div className="rounded-md bg-panelMuted p-1.5">
+          <Icon className={cn(toneStyles[tone])} size={15} />
+        </div>
       </div>
-      <div className="mt-4 text-2xl font-semibold tracking-tight">{value}</div>
-      <div className="mt-1 text-sm text-textMuted">{detail}</div>
+      <div className="mt-4 text-3xl font-semibold tracking-tight">{value}</div>
+      <div className="mt-2 text-sm leading-6 text-textMuted">{detail}</div>
     </section>
   );
 }

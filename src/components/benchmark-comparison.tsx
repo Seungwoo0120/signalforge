@@ -1,8 +1,11 @@
 import { GitCompareArrows } from "lucide-react";
 
-import { benchmarkStats } from "@/data/mock-data";
+import { getBenchmarkStats } from "@/data/mock-data";
+import type { Benchmark, BenchmarkStat } from "@/types/strategy";
 
-export function BenchmarkComparison() {
+export function BenchmarkComparison({ benchmark, stats }: { benchmark: Benchmark; stats?: BenchmarkStat[] }) {
+  const benchmarkStats = stats ?? getBenchmarkStats(benchmark);
+
   return (
     <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div className="flex items-start gap-3">
@@ -12,7 +15,7 @@ export function BenchmarkComparison() {
         <div>
           <h2 className="text-base font-semibold tracking-tight">Benchmark Comparison</h2>
           <p className="mt-1 text-sm leading-6 text-textMuted">
-            Momentum Trend Strategy is compared against SPY using mock monthly returns.
+            The selected strategy is compared against {benchmark} using simulated monthly returns.
           </p>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import { BrainCircuit } from "lucide-react";
 
-export function AiExplanationPanel() {
+import type { ResearchNotes } from "@/types/research";
+
+export function AiExplanationPanel({ notes }: { notes?: ResearchNotes }) {
   return (
     <section className="rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <div className="flex items-start gap-3">
@@ -8,21 +10,21 @@ export function AiExplanationPanel() {
           <BrainCircuit size={20} />
         </div>
         <div>
-          <h2 className="text-base font-semibold tracking-tight">Explanation Placeholder</h2>
+          <h2 className="text-base font-semibold tracking-tight">Strategy Interpretation Preview</h2>
           <p className="mt-1 text-sm leading-6 text-textMuted">
-            AI-assisted explanations will later summarize rule logic, assumptions, and risk
-            tradeoffs. No model call is wired in this version.
+            Future AI-assisted interpretation will summarize rule logic, assumptions, and risk
+            tradeoffs. No model call is connected in this prototype version.
           </p>
         </div>
       </div>
 
       <div className="mt-5 rounded-md border border-dashed border-borderSoft bg-panelMuted p-4">
-        <div className="text-sm font-semibold">Draft explanation preview</div>
+        <div className="text-sm font-semibold">Research Interpretation Preview</div>
         <p className="mt-2 text-sm leading-6 text-textMuted">
-          This mock strategy favors Nasdaq 100 stocks with confirmed long-term uptrends, positive
-          short-term momentum, acceptable RSI levels, and above-average volume. The backtest preview
-          should be read as interface sample data, not as a forecast or investment recommendation.
+          {notes?.strategySummary ??
+            "This simulated strategy favors stocks with confirmed long-term uptrends, positive short-term momentum, acceptable RSI levels, and above-average volume. The backtest preview should be read as prototype analysis, not as a forecast or investment recommendation."}
         </p>
+        {notes ? <p className="mt-3 text-xs leading-5 text-textMuted">{notes.disclaimer}</p> : null}
       </div>
     </section>
   );
