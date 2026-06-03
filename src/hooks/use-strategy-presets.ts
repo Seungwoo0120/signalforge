@@ -13,7 +13,7 @@ export const builtInStrategyPresets: StrategyPreset[] = [
   {
     id: "template-momentum-trend",
     name: "Momentum Trend Strategy",
-    description: "Balanced Nasdaq 100 trend and momentum template for the mock prototype.",
+    description: "Balanced Nasdaq 100 trend and momentum template for prototype analysis.",
     createdAt: templateDate,
     updatedAt: templateDate,
     builtIn: true,

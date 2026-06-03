@@ -35,8 +35,8 @@ export function ScreenerPage() {
     <>
       <PageHeader
         eyebrow="Screener"
-        title="Review stocks passing the current mock rule stack."
-        description={`${screener.ruleSummary} Results are hypothetical sample data for UI prototyping only.`}
+        title="Review stocks passing the current rule stack."
+        description={`${screener.ruleSummary} Results are hypothetical sample data for the simulated research workflow.`}
       />
 
       <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
@@ -140,7 +140,7 @@ export function ScreenerPage() {
         {rows.length === 0 ? (
           <div className="mt-5">
             <EmptyState
-              description="Try a broader status filter or search term. The screener is using deterministic mock data from the current strategy."
+              description="Try a broader status filter or search term. The screener is using deterministic prototype data from the current strategy."
               title="No matching candidates"
             />
           </div>

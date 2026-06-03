@@ -15,15 +15,15 @@ export function generateMockResearchNotes(
   const drawdown = Math.abs(backtest.rawMetrics.maxDrawdown);
 
   return {
-    strategySummary: `${strategy.name} screens ${strategy.universe} stocks against ${strategy.benchmark}, selects ${strategy.portfolioSize.toLowerCase()}, and assumes ${strategy.rebalance.toLowerCase()} rebalancing with ${strategy.transactionCost} transaction cost. The current mock screener includes ${screener.summary.included} names and filters ${screener.summary.filtered}.`,
+    strategySummary: `${strategy.name} screens ${strategy.universe} stocks against ${strategy.benchmark}, selects ${strategy.portfolioSize.toLowerCase()}, and assumes ${strategy.rebalance.toLowerCase()} rebalancing with ${strategy.transactionCost} transaction cost. The current simulated screener includes ${screener.summary.included} names and filters ${screener.summary.filtered}.`,
     sections: [
       {
         id: "worked",
         title: "What worked",
         body:
           returnGap >= 0
-            ? `The mock result benefits from the rule stack selecting stronger momentum candidates while comparing favorably with ${strategy.benchmark}. The estimated total return gap is ${returnGap.toFixed(1)} percentage points in this simulated sample.`
-            : `The mock result trails ${strategy.benchmark} in this configuration. The rules still reduce some weak candidates, but the selected assumptions do not offset benchmark strength in this sample.`
+            ? `The simulated result benefits from the rule stack selecting stronger momentum candidates while comparing favorably with ${strategy.benchmark}. The estimated total return gap is ${returnGap.toFixed(1)} percentage points in this simulated sample.`
+            : `The simulated result trails ${strategy.benchmark} in this configuration. The rules still reduce some weak candidates, but the selected assumptions do not offset benchmark strength in this sample.`
       },
       {
         id: "risks",
@@ -33,29 +33,29 @@ export function generateMockResearchNotes(
       {
         id: "overfitting",
         title: "Overfitting warning",
-        body: "These thresholds are educational mock inputs. A real strategy would need out-of-sample testing, survivorship-bias controls, sensitivity analysis, and realistic trade execution assumptions."
+        body: "These thresholds are educational prototype inputs. A real strategy would need out-of-sample testing, survivorship-bias controls, sensitivity analysis, and realistic trade execution assumptions."
       },
       {
         id: "costs",
         title: "Transaction cost warning",
-        body: `${strategy.rebalance} rebalancing and ${strategy.transactionCost} transaction cost create an estimated ${costImpact.toFixed(2)}% annualized drag in this mock model. Higher turnover can make attractive gross results less useful after costs.`
+        body: `${strategy.rebalance} rebalancing and ${strategy.transactionCost} transaction cost create an estimated ${costImpact.toFixed(2)}% annualized drag in this simulated model. Higher turnover can make attractive gross results less useful after costs.`
       },
       {
         id: "benchmark",
         title: "Benchmark interpretation",
-        body: `Alpha and beta are calculated against ${strategy.benchmark}. A higher return does not prove the rules are predictive; it only shows how this deterministic mock setup reacts to the selected assumptions.`
+        body: `Alpha and beta are calculated against ${strategy.benchmark}. A higher return does not prove the rules are predictive; it only shows how this deterministic prototype setup reacts to the selected assumptions.`
       },
       {
         id: "stability",
         title: "Stability read",
         body: sensitivity
-          ? `The current mock stability score is ${sensitivity.stabilityScore}. Transaction cost sensitivity is ${sensitivity.transactionCostSensitivity.toLowerCase()}, and portfolio size sensitivity is ${sensitivity.portfolioSensitivity.toLowerCase()}. ${sensitivity.overfittingWarning ?? "The tested variations do not show severe fragility in this mock setup."}`
+          ? `The current stability score is ${sensitivity.stabilityScore}. Transaction cost sensitivity is ${sensitivity.transactionCostSensitivity.toLowerCase()}, and portfolio size sensitivity is ${sensitivity.portfolioSensitivity.toLowerCase()}. ${sensitivity.overfittingWarning ?? "The tested variations do not show severe fragility in this simulated setup."}`
           : "A full stability read compares nearby parameter variations. This prototype treats that output as educational context rather than proof of robustness."
       },
       {
         id: "improvements",
         title: "Possible improvements",
-        body: "Next product iterations should add sector caps, trade logs, regime filters, and a mock service contract that can later be replaced by a real backend quant engine."
+        body: "Next product iterations should add sector caps, trade logs, regime filters, and a service contract that can later be replaced by a real backend quant engine."
       }
     ],
     disclaimer:

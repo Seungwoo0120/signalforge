@@ -2,7 +2,9 @@
 
 A modern quantitative strategy research and backtesting web application.
 
-SignalForge is currently a frontend prototype built with Next.js, TypeScript, Tailwind CSS, and mock strategy/backtest data. It does not connect to market data APIs, AI services, authentication, databases, or a real backtesting engine yet.
+SignalForge helps users structure rule-based equity strategy ideas, review simulated backtest results, compare benchmark context, and inspect risk metrics through a modern web dashboard.
+
+The current version uses simulated prototype data and client-side state only. It is designed with a service boundary that can later be replaced by real market data providers, persistent storage, and backend backtesting engines. SignalForge is not financial advice, a trading recommendation, or a prediction of future performance.
 
 ## Development
 
@@ -43,7 +45,7 @@ The production build now runs Next.js compilation plus its built-in lint and Typ
 
 ## Current Limitations
 
-- Uses local mock data only.
+- Uses simulated prototype data only.
 - No real market data API calls.
 - No real AI/OpenAI calls.
 - No authentication or user accounts.
@@ -51,4 +53,4 @@ The production build now runs Next.js compilation plus its built-in lint and Typ
 
 ## Recommended Next Step
 
-Add a small mock backtest service boundary, such as a typed function or local module that accepts the strategy configuration and returns mock results. That will make it easier to replace the mock implementation with a real backend later without rewriting the UI.
+Strengthen the simulated backtest service boundary so a typed backend quant engine can replace the prototype implementation later without rewriting the UI.

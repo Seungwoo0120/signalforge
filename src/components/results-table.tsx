@@ -13,7 +13,7 @@ export function ResultsTable({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold tracking-tight">Signal Snapshot</h2>
-          <p className="mt-1 text-sm text-textMuted">Latest mock rebalance candidates and filters</p>
+          <p className="mt-1 text-sm text-textMuted">Latest simulated rebalance candidates and filters</p>
         </div>
         <span className="rounded-md border border-borderSoft bg-panelMuted px-3 py-2 text-sm font-medium text-textMuted">
           {rebalance} rebalance

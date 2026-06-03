@@ -30,7 +30,7 @@ export function runMockSensitivityAnalysis(strategy: StrategyConfig): Sensitivit
     scoreDetail: buildScoreDetail(stabilityScore, returnRange, sharpeRange),
     overfittingWarning:
       stabilityScore === "Low"
-        ? "Small parameter changes produce meaningfully different mock results. Treat this configuration as fragile until tested more broadly."
+        ? "Small parameter changes produce meaningfully different simulated results. Treat this configuration as fragile until tested more broadly."
         : null,
     transactionCostSensitivity,
     portfolioSensitivity
@@ -148,7 +148,7 @@ function scoreStability(returnRange: number, sharpeRange: number, drawdownRange:
 
 function buildScoreDetail(score: StabilityScore, returnRange: number, sharpeRange: number) {
   if (score === "High") {
-    return `Mock results are relatively similar across tested variations. Total return range is ${returnRange.toFixed(1)} points and Sharpe range is ${sharpeRange.toFixed(2)}.`;
+    return `Simulated results are relatively similar across tested variations. Total return range is ${returnRange.toFixed(1)} points and Sharpe range is ${sharpeRange.toFixed(2)}.`;
   }
 
   if (score === "Medium") {

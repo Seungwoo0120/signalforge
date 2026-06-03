@@ -218,7 +218,7 @@ export function runMockBacktest(strategy: StrategyConfig): BacktestResult {
           : "S&P 500 adds broader sector exposure and slightly lower volatility assumptions.",
       portfolioConcentration: `${strategy.portfolioSize} changes concentration risk and return dispersion.`,
       rebalanceTurnover: `${strategy.rebalance} rebalance assumes ${turnover.toFixed(2)}x annual turnover.`,
-      transactionCost: `${strategy.transactionCost} cost reduces returns by about ${annualCostImpact.toFixed(2)}% annualized in this mock model.`,
+      transactionCost: `${strategy.transactionCost} cost reduces returns by about ${annualCostImpact.toFixed(2)}% annualized in this simulated model.`,
       ruleImpact: "Trend, momentum, RSI, and volume rules alter downside guardrails and candidate quality."
     },
     rebalanceLog
@@ -278,7 +278,7 @@ function buildMetrics({
     {
       label: "CAGR",
       value: formatPercent(cagr),
-      detail: "Mock annualized return",
+      detail: "Simulated annualized return",
       tone: metricTone(cagr)
     },
     {
@@ -302,7 +302,7 @@ function buildMetrics({
     {
       label: "Win Rate",
       value: formatPercent(winRate),
-      detail: "Positive mock periods",
+      detail: "Positive simulated periods",
       tone: "neutral"
     },
     {

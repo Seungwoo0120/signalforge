@@ -15,7 +15,7 @@ export function BenchmarkComparison({ benchmark, stats }: { benchmark: Benchmark
         <div>
           <h2 className="text-base font-semibold tracking-tight">Benchmark Comparison</h2>
           <p className="mt-1 text-sm leading-6 text-textMuted">
-            The selected strategy is compared against {benchmark} using mock monthly returns.
+            The selected strategy is compared against {benchmark} using simulated monthly returns.
           </p>
         </div>
       </div>

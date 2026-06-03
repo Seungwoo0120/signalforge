@@ -81,8 +81,8 @@ export function BacktestPage() {
     <>
       <PageHeader
         eyebrow="Backtest"
-        title="Review mock strategy performance and risk."
-        description="This page uses deterministic mock data to model the frontend flow. It is not a real backtest, forecast, or investment recommendation."
+        title="Review simulated strategy performance and risk."
+        description="This page uses deterministic prototype data to demonstrate the research workflow. It is not a live trading system, investment recommendation, or forecast."
         actions={
           <button
             className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
@@ -90,7 +90,7 @@ export function BacktestPage() {
             onClick={handleRunBacktest}
           >
             <Play size={17} />
-            Run Backtest
+            Run Simulated Backtest
           </button>
         }
       />
@@ -117,7 +117,7 @@ export function BacktestPage() {
             <div className="flex flex-col items-start gap-2 lg:items-end">
               <div className="inline-flex items-center gap-2 rounded-md border border-borderSoft bg-panelMuted px-3 py-2 text-sm font-medium text-textMuted">
                 <Clock size={16} />
-                Last mock run: <span className="text-textPrimary">{runLabel}</span>
+                Last simulated run: <span className="text-textPrimary">{runLabel}</span>
               </div>
               {selectedRun ? (
                 <button
@@ -235,7 +235,7 @@ function RecentRuns({
       <div className="mt-4 max-h-[360px] space-y-2 overflow-y-auto pr-1">
         {runs.length === 0 ? (
           <p className="rounded-md border border-dashed border-borderSoft bg-panelMuted p-3 text-sm leading-6 text-textMuted">
-            No saved runs yet. Click Run Backtest to create a snapshot.
+            No saved runs yet. Run a simulated backtest to create a snapshot.
           </p>
         ) : (
           runs.map((run) => (
@@ -338,8 +338,8 @@ function AssumptionsPanel({ strategy }: { strategy: StrategyConfig }) {
         <Assumption label="Weighting" value={strategy.weighting} />
         <Assumption label="Rebalance" value={strategy.rebalance} />
         <Assumption label="Transaction cost" value={strategy.transactionCost} />
-        <Assumption label="Initial capital" value="$10,000 mock account" />
-        <Assumption label="Data status" value="Simulated mock data for prototype" />
+        <Assumption label="Initial capital" value="$10,000 simulated account" />
+        <Assumption label="Data status" value="Simulated prototype data" />
       </div>
       <div className="mt-4 rounded-md bg-panelMuted p-3">
         <div className="text-sm font-semibold">Signal rules</div>
@@ -359,7 +359,7 @@ function RebalanceLog({ rows }: { rows: RebalanceLogRow[] }) {
       <div>
         <h2 className="text-base font-semibold tracking-tight">Trade / Rebalance Log</h2>
         <p className="mt-1 text-sm leading-6 text-textMuted">
-          Deterministic mock rebalance rows tied to ranking, portfolio size, turnover, and cost assumptions.
+          Deterministic simulated rebalance rows tied to ranking, portfolio size, turnover, and cost assumptions.
         </p>
       </div>
       <div className="mt-5 max-w-full overflow-x-auto rounded-md border border-borderSoft">
@@ -558,7 +558,7 @@ function SensitivityTable({ results }: { results: SensitivityResult[] }) {
     <section className="min-w-0 rounded-md border border-borderSoft bg-panel p-5 shadow-panel">
       <h2 className="text-base font-semibold tracking-tight">Parameter Sensitivity</h2>
       <p className="mt-1 text-sm leading-6 text-textMuted">
-        Deterministic mock variations test whether nearby settings produce similar results.
+        Deterministic simulated variations test whether nearby settings produce similar results.
       </p>
       <div className="mt-5 max-w-full overflow-x-auto rounded-md border border-borderSoft">
         <table className="w-full min-w-[820px] border-collapse text-left text-sm">

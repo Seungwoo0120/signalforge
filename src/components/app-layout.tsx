@@ -26,7 +26,7 @@ const navItems = [
     icon: SlidersHorizontal,
     title: "Configure strategy rules"
   },
-  { label: "Backtest", href: "/backtest", icon: BarChart3, title: "Mock backtest results" },
+  { label: "Backtest", href: "/backtest", icon: BarChart3, title: "Backtest Results" },
   { label: "Screener", href: "/screener", icon: Search, title: "Filtered stock universe" },
   {
     label: "Research Notes",
@@ -78,10 +78,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="absolute bottom-6 left-5 right-5 rounded-md border border-borderSoft bg-panelMuted p-4">
-          <div className="text-sm font-semibold">Data mode</div>
+          <div className="text-sm font-semibold">Prototype Mode</div>
           <p className="mt-2 text-sm leading-6 text-textMuted">
-            Mock strategy and backtest data only. Market APIs, auth, and AI calls are intentionally
-            out of scope for this foundation.
+            SignalForge currently uses simulated market and strategy data for frontend demonstration.
+            Real market APIs, persistent storage, and AI-assisted interpretation are planned for future iterations.
           </p>
         </div>
       </aside>

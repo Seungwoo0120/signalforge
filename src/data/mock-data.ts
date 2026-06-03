@@ -69,7 +69,7 @@ export function getRiskMetrics(benchmark: Benchmark): StrategyMetric[] {
     {
       label: "CAGR",
       value: "18.7%",
-      detail: "5-year mock period",
+      detail: "5-year simulated period",
       tone: "positive"
     },
     {

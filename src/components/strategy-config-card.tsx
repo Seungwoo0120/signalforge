@@ -16,7 +16,7 @@ export function StrategyConfigCard({ strategy }: { strategy: StrategyConfig }) {
           <h2 className="mt-1 text-xl font-semibold tracking-tight">{strategy.name}</h2>
         </div>
         <span className="rounded-md border border-borderSoft bg-panelMuted px-3 py-1.5 text-sm font-medium text-textMuted">
-          Mock backtest
+          Simulated Backtest
         </span>
       </div>
 

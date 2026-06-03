@@ -33,7 +33,7 @@ export function StrategyBuilderPage() {
       <PageHeader
         eyebrow="Strategy Builder"
         title="Configure a transparent rule-based strategy."
-        description="Adjust the mock configuration below. Changes are kept client-side and immediately update the dashboard, backtest, screener, and notes."
+        description="Adjust the simulated strategy configuration below. Changes are kept client-side and immediately update the dashboard, backtest, screener, and notes."
         actions={
           <span className="inline-flex items-center gap-2 rounded-md border border-borderSoft bg-panelMuted px-4 py-2.5 text-sm font-semibold text-textMuted">
             <Save size={17} />
@@ -51,7 +51,7 @@ export function StrategyBuilderPage() {
             <div>
               <h2 className="text-base font-semibold tracking-tight">Strategy configuration</h2>
               <p className="mt-1 text-sm text-textMuted">
-                Mock inputs only. No live orders, market APIs, or predictions are connected.
+                Prototype inputs only. No live orders, market APIs, or predictions are connected.
               </p>
             </div>
           </div>
@@ -59,7 +59,7 @@ export function StrategyBuilderPage() {
           <div className="mt-6 rounded-md border border-borderSoft bg-panelMuted p-4">
             <div className="text-sm font-semibold">Portfolio setup</div>
             <p className="mt-1 text-sm leading-6 text-textMuted">
-              These inputs define the mock universe, benchmark, rebalance cadence, and cost assumptions.
+              These inputs define the simulated universe, benchmark, rebalance cadence, and cost assumptions.
             </p>
           </div>
 
@@ -142,7 +142,7 @@ export function StrategyBuilderPage() {
           <div className="mt-8 border-t border-borderSoft pt-6">
             <h3 className="text-sm font-semibold">Signal rules</h3>
             <p className="mt-1 text-sm leading-6 text-textMuted">
-              Rules are transparent filters for the mock screener and backtest service.
+              Rules are transparent filters for the simulated screener and backtest workflow.
             </p>
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
               <ToggleRow

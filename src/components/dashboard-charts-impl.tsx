@@ -44,7 +44,7 @@ export function EquityCurveChart({ benchmark, data }: { benchmark: Benchmark; da
   return (
     <ChartContainer
       title="Strategy Equity Curve"
-      subtitle={`Growth of $100, mock data, compared with ${benchmark}`}
+      subtitle={`Growth of $100, simulated prototype data, compared with ${benchmark}`}
       action={<LegendPill label={`Benchmark: ${benchmark}`} />}
     >
       <div className="h-[280px] min-w-0">
@@ -112,7 +112,7 @@ export function DrawdownChart({ benchmark, data }: { benchmark: Benchmark; data?
   const chartData = data ?? getChartData(benchmark).drawdown;
 
   return (
-    <ChartContainer title="Drawdown Preview" subtitle="Peak-to-trough declines over the mock test">
+    <ChartContainer title="Drawdown Preview" subtitle="Peak-to-trough declines over the simulated test">
       <div className="h-[265px] min-w-0">
         {mounted ? (
           <ResponsiveContainer
@@ -172,7 +172,7 @@ export function MonthlyReturnsChart({ benchmark, data }: { benchmark: Benchmark;
   const chartData = data ?? getChartData(benchmark).monthly;
 
   return (
-    <ChartContainer title="Recent Monthly Returns" subtitle="Mock return distribution by month">
+    <ChartContainer title="Recent Monthly Returns" subtitle="Simulated return distribution by month">
       <div className="h-[265px] min-w-0">
         {mounted ? (
           <ResponsiveContainer

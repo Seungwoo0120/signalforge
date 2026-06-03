@@ -37,8 +37,8 @@ export function DashboardPage() {
     <>
       <PageHeader
         eyebrow={`Home / Overview / ${strategy.universe}`}
-        title="Build, test, and understand rule-based stock strategies."
-        description="SignalForge is an interactive mock-data frontend prototype for quantitative strategy research, focused on clear backtest visuals, risk metrics, and benchmark context."
+        title="Build, test, and interpret rule-based equity strategies."
+        description="SignalForge helps structure strategy ideas, compare simulated backtest results, and review risk metrics before real data integration."
         actions={
           <>
             <button
@@ -47,7 +47,7 @@ export function DashboardPage() {
               onClick={handleRunBacktest}
             >
               <Play size={17} />
-              Run mock backtest
+              Run Simulated Backtest
             </button>
             <button
               className="inline-flex items-center gap-2 rounded-md border border-borderSoft bg-panelMuted px-4 py-2.5 text-sm font-semibold text-textPrimary transition hover:border-accent"
@@ -170,7 +170,7 @@ function LatestRunSummary({
       <div className="w-full rounded-md border border-dashed border-borderSoft bg-panelMuted p-4 xl:w-[360px] xl:shrink-0">
         <div className="text-sm font-semibold">Latest Backtest Run</div>
         <p className="mt-2 text-sm leading-6 text-textMuted">
-          No saved run yet. Run a mock backtest to store a snapshot of the current strategy.
+          No saved run yet. Run a simulated backtest to store a snapshot of the current strategy.
         </p>
       </div>
     );
